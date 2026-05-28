@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 const Cart = () => {
@@ -169,7 +169,7 @@ const Cart = () => {
               backgroundClip: 'text'
             }}>Giỏ Hàng Trống</h2>
             <p>Bạn chưa có món ăn nào trong giỏ hàng.</p>
-            <a href="/menu" className="btn">Xem Thực Đơn</a>
+            <Link to="/menu" className="btn">Xem Thực Đơn</Link>
           </div>
         </div>
       </div>
@@ -469,8 +469,8 @@ const Cart = () => {
                 </svg>
               Thanh Toán
             </button>
-              <a 
-                href="/menu" 
+              <Link 
+                to="/menu" 
                 style={{
                   background: 'white',
                   color: '#667eea',
@@ -500,7 +500,7 @@ const Cart = () => {
                 }}
               >
                 Tiếp Tục Chọn Món
-            </a>
+            </Link>
             </div>
           </div>
         </div>
