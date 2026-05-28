@@ -13,7 +13,7 @@ services:
       - key: PORT
         value: 10000
       - key: FRONTEND_URL
-        sync: false  # Sẽ cập nhật sau khi deploy frontend
+        value: https://food-micay.onrender.com
       - key: JWT_SECRET
         generateValue: true
       - key: EMAIL_HOST
@@ -39,5 +39,5 @@ services:
         destination: /index.html
     envVars:
       - key: VITE_API_URL
-        sync: false  # Sẽ cập nhật sau khi deploy backend
+        value: https://food-backend-pm7b.onrender.com/api
 
