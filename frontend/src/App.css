@@ -629,8 +629,9 @@
     padding: 0.65rem 1.2rem;
     font-size: 0.9rem;
   }
-  
-  .cart-btn span {
+
+  /* Keep the cart badge visible on mobile, but hide other spans inside .cart-btn */
+  .cart-btn span:not(.cart-count) {
     display: none;
   }
   

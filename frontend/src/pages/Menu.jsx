@@ -93,7 +93,8 @@ const Menu = () => {
       }
 
       localStorage.setItem(cartKey, JSON.stringify(cart));
-      window.dispatchEvent(new Event('cartUpdated'));
+      const cartCount = cart.reduce((sum, cartItem) => sum + cartItem.quantity, 0);
+      window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { count: cartCount } }));
       setMessage(`Đã thêm ${item.name} vào giỏ hàng!`);
       setTimeout(() => setMessage(''), 2000);
     } catch (error) {

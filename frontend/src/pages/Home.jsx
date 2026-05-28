@@ -126,12 +126,13 @@ const Home = () => {
       }
       
       localStorage.setItem(cartKey, JSON.stringify(cart));
+      const cartCount = cart.reduce((sum, cartItem) => sum + cartItem.quantity, 0);
       
       // Show success message
       alert(`✅ Đã thêm ${item.name} vào giỏ hàng!`);
       
       // Update cart count in header (if exists)
-      window.dispatchEvent(new Event('cartUpdated'));
+      window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { count: cartCount } }));
     } catch (error) {
       console.error('Error adding to cart:', error);
       alert('❌ Có lỗi xảy ra khi thêm vào giỏ hàng');

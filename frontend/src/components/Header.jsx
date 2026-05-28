@@ -24,7 +24,11 @@ const Header = () => {
 
   // Update cart count from localStorage
   useEffect(() => {
-    const updateCartCount = () => {
+    const updateCartCount = (event) => {
+      if (event && event.detail && typeof event.detail.count === 'number') {
+        setCartCount(event.detail.count);
+        return;
+      }
       const cartKey = user ? `cart_${user.id}` : 'cart_guest';
       const cart = JSON.parse(localStorage.getItem(cartKey) || '[]');
       const count = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -33,7 +37,11 @@ const Header = () => {
 
     updateCartCount();
     window.addEventListener('cartUpdated', updateCartCount);
-    return () => window.removeEventListener('cartUpdated', updateCartCount);
+    window.addEventListener('storage', updateCartCount);
+    return () => {
+      window.removeEventListener('cartUpdated', updateCartCount);
+      window.removeEventListener('storage', updateCartCount);
+    };
   }, [user]);
 
   return (
