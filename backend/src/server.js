@@ -24,7 +24,7 @@ const PORT = process.env.PORT || 3001;
 // Middleware
 const allowedOrigins = process.env.FRONTEND_URL 
   ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
-  : ['http://localhost:5173'];
+  : ['https://food-micay.onrender.com'];
 
 app.use(cors({
   origin: (origin, callback) => {

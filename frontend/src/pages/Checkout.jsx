@@ -179,7 +179,7 @@ const Checkout = () => {
       let errorMessage = 'Đã xảy ra lỗi khi tạo đơn hàng. Vui lòng thử lại.';
       
       if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
-        errorMessage = 'Không thể kết nối đến server. Vui lòng kiểm tra backend đã chạy chưa (http://localhost:3001).';
+        errorMessage = 'Không thể kết nối đến server. Vui lòng kiểm tra backend đã chạy chưa (https://food-micay.onrender.com).';
       } else if (error.message.includes('Giỏ hàng không được để trống')) {
         errorMessage = 'Giỏ hàng của bạn đang trống. Vui lòng thêm món ăn vào giỏ hàng.';
       } else if (error.message.includes('Tổng giá không hợp lệ')) {
@@ -238,7 +238,7 @@ const Checkout = () => {
       <div className="container" style={{ maxWidth: '1200px', margin: '0 auto' }}>
         <h2 style={{ color: '#2d3748', marginBottom: '2rem', textAlign: 'center' }}>Thanh Toán</h2>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem' }}>
           {/* Order Summary */}
           <div style={{
             background: 'rgba(255, 255, 255, 0.95)',

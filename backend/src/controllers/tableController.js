@@ -5,7 +5,7 @@ export const getAllTables = async (req, res) => {
     const tables = await db.all('SELECT * FROM tables ORDER BY id ASC');
     
     // Generate QR code URLs for each table
-    const baseUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const baseUrl = process.env.FRONTEND_URL || 'https://food-micay.onrender.com';
     const tablesWithQR = tables.map(table => ({
       ...table,
       qrCodeUrl: `${baseUrl}/home?table=${table.id}`
@@ -27,7 +27,7 @@ export const getTableById = async (req, res) => {
       return res.status(404).json({ error: 'Bàn không tồn tại' });
     }
 
-    const baseUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const baseUrl = process.env.FRONTEND_URL || 'https://food-micay.onrender.com';
     res.json({
       ...table,
       qrCodeUrl: `${baseUrl}/home?table=${table.id}`
@@ -52,7 +52,7 @@ export const createTable = async (req, res) => {
     );
 
     const newTable = await db.get('SELECT * FROM tables WHERE id = ?', [result.lastID]);
-    const baseUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const baseUrl = process.env.FRONTEND_URL || 'https://food-micay.onrender.com';
     
     res.status(201).json({
       ...newTable,
@@ -89,7 +89,7 @@ export const updateTable = async (req, res) => {
     );
 
     const updatedTable = await db.get('SELECT * FROM tables WHERE id = ?', [id]);
-    const baseUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const baseUrl = process.env.FRONTEND_URL || 'https://food-micay.onrender.com';
     
     res.json({
       ...updatedTable,

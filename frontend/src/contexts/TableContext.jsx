@@ -16,16 +16,10 @@ export const TableProvider = ({ children }) => {
 
   useEffect(() => {
     const loadTable = async () => {
-      // Load table from localStorage first
-      const storedTable = localStorage.getItem('currentTable');
-      if (storedTable) {
-        setCurrentTable(JSON.parse(storedTable));
-        return;
-      }
-
-      // Check URL for table parameter
+      // Check URL for table parameter first, so QR code always overrides stale localStorage data
       const urlParams = new URLSearchParams(window.location.search);
       const tableId = urlParams.get('table');
+
       if (tableId) {
         try {
           // Try to load from API
@@ -38,13 +32,21 @@ export const TableProvider = ({ children }) => {
           };
           setCurrentTable(tableData);
           localStorage.setItem('currentTable', JSON.stringify(tableData));
+          return;
         } catch (error) {
           console.error('Error loading table from API:', error);
           // Fallback to basic table data
           const table = { id: tableId, number: `Bàn ${tableId}` };
           setCurrentTable(table);
           localStorage.setItem('currentTable', JSON.stringify(table));
+          return;
         }
+      }
+
+      // No table param in URL, fallback to localStorage
+      const storedTable = localStorage.getItem('currentTable');
+      if (storedTable) {
+        setCurrentTable(JSON.parse(storedTable));
       }
     };
 

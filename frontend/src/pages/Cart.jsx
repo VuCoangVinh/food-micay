@@ -23,7 +23,7 @@ const Cart = () => {
     }
     // If it's an upload path from backend, add backend URL
     if (imagePath.startsWith('/uploads/')) {
-      const backendUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001';
+      const backendUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'https://food-micay.onrender.com';
       return `${backendUrl}${imagePath}`;
     }
     // If it's a local public path (/images/...), use it directly

@@ -29,8 +29,8 @@ const TableManagement = () => {
           number: table.name, // For compatibility
           capacity: table.capacity,
           status: table.status,
-          qrCode: table.qrCodeUrl || generateQRCode(table.id),
-          qrCodeUrl: table.qrCodeUrl || generateQRCode(table.id)
+          qrCode: normalizeQRCodeUrl(table.qrCodeUrl) || generateQRCode(table.id),
+          qrCodeUrl: normalizeQRCodeUrl(table.qrCodeUrl) || generateQRCode(table.id)
         }));
         setTables(transformedTables);
       } else {
@@ -45,9 +45,14 @@ const TableManagement = () => {
 
   const generateQRCode = (tableId) => {
     // Prefer qrCodeUrl from backend API (most reliable)
-    // Fallback to current origin if not available
-    const baseUrl = import.meta.env.VITE_FRONTEND_URL || window.location.origin;
+    // Fallback to the deployed frontend URL if not available
+    const baseUrl = import.meta.env.VITE_FRONTEND_URL || 'https://food-micay.onrender.com';
     return `${baseUrl}/home?table=${tableId}`;
+  };
+
+  const normalizeQRCodeUrl = (qrCodeUrl) => {
+    if (!qrCodeUrl) return null;
+    return qrCodeUrl.replace(/https?:\/\/localhost(:\d+)?/g, import.meta.env.VITE_FRONTEND_URL || 'https://food-micay.onrender.com');
   };
 
   const generateQRImage = (tableId) => {
@@ -147,7 +152,7 @@ const TableManagement = () => {
   };
 
   const copyQRUrl = (table) => {
-    const urlToCopy = table.qrCodeUrl || table.qrCode || generateQRCode(table.id);
+    const urlToCopy = normalizeQRCodeUrl(table.qrCodeUrl) || normalizeQRCodeUrl(table.qrCode) || generateQRCode(table.id);
     navigator.clipboard.writeText(urlToCopy);
     setCopiedTableId(table.id);
     setTimeout(() => setCopiedTableId(null), 2000);

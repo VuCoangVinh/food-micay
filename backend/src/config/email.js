@@ -170,7 +170,7 @@ export const sendPaymentConfirmation = async (orderData) => {
 
     const htmlContent = `
       <!DOCTYPE html>
-      <html>
+      <htmlll>
       <head>
         <meta charset="UTF-8">
         <style>

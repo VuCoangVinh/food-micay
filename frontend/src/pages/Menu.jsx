@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { menuAPI } from '../services/api.js';
 
 const Menu = () => {
-  const { user } = useAuth();
-  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [menuItems, setMenuItems] = useState([]);
   const [message, setMessage] = useState('');
@@ -29,7 +25,7 @@ const Menu = () => {
     }
     // If it's an upload path from backend, add backend URL
     if (imagePath.startsWith('/uploads/')) {
-      const backendUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001';
+      const backendUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'https://food-micay.onrender.com';
       return `${backendUrl}${imagePath}`;
     }
     // If it's a local public path (/images/...), use it directly
@@ -40,207 +36,70 @@ const Menu = () => {
     return 'https://via.placeholder.com/300x200?text=No+Image';
   };
 
+  const [loadError, setLoadError] = useState('');
+
   useEffect(() => {
     loadMenuItems();
   }, []);
 
   const loadMenuItems = async () => {
     setLoading(true);
+    setLoadError('');
+
     try {
-      // Try to load from API first
       const items = await menuAPI.getAll();
       if (items && items.length > 0) {
         setMenuItems(items);
         setLoading(false);
         return;
       }
+      throw new Error('Không có dữ liệu menu từ API');
     } catch (error) {
-      console.error('Error loading menu from API, falling back to localStorage:', error);
-    }
-    
-    // Fallback to localStorage
-    try {
-    const stored = localStorage.getItem('menuItems');
-    if (stored) {
-        let items = JSON.parse(stored);
-        
-        // Xóa các món không mong muốn
-        const itemsBeforeDelete = items.length;
-        items = items.filter(item => 
-          item.name !== "Bún Bò" && 
-          item.name !== "Bún Bò Huế" &&
-          item.name !== "Chả Cá" &&
-          item.name !== "Chả Cá Lã Vọng"
-        );
-        if (items.length < itemsBeforeDelete) {
-          localStorage.setItem('menuItems', JSON.stringify(items));
+      console.error('Error loading menu from API:', error);
+      const stored = localStorage.getItem('menuItems');
+      if (stored) {
+        try {
+          const items = JSON.parse(stored);
+          setMenuItems(items);
+        } catch (parseError) {
+          console.error('Error parsing menuItems from localStorage:', parseError);
+          setMenuItems([]);
+          setLoadError('Không thể tải danh sách món ăn. Vui lòng thử lại sau.');
         }
-        
-        setMenuItems(items);
-    } else {
-        // Load default items
-        loadDefaultItems();
+      } else {
+        setMenuItems([]);
+        setLoadError('Không thể tải danh sách món ăn. Vui lòng kiểm tra kết nối đến backend.');
       }
-    } catch (error) {
-      console.error('Error loading from localStorage:', error);
-      loadDefaultItems();
     } finally {
       setLoading(false);
     }
   };
 
-  // Fallback function for default items (only used if no data exists)
-  const loadDefaultItems = () => {
-      // Default menu items if admin hasn't added any
-      const defaultItems = [
-    {
-      id: 1,
-      name: "Phở Bò Tái",
-      description: "Phở bò truyền thống với thịt bò tái tươi ngon",
-      price: 75000,
-      category: "main",
-        image: "/images/pho_bo.jpg"
-      },
-      {
-        id: 1.5,
-        name: "Cơm Tấm Sài Gòn",
-        description: "Cơm tấm với sườn nướng, chả trứng và đồ chua",
-        price: 60000,
-        category: "main",
-        image: "/images/com_tam.jpg"
-    },
-    {
-      id: 2,
-        name: "Bún Mọc",
-        description: "Bún mọc thơm ngon với thịt viên và nước dùng đậm đà",
-        price: 50000,
-      category: "main",
-        image: "/images/bunmoc.jpg"
-    },
-    {
-      id: 3,
-        name: "Bún Chả",
-        description: "Bún chả Hà Nội với thịt nướng thơm lừng",
-      price: 60000,
-      category: "main",
-        image: "/images/buncha.jpg"
-    },
-    {
-      id: 4,
-      name: "Gỏi Cuốn Tôm Thịt",
-      description: "Gỏi cuốn tươi ngon với tôm, thịt, rau sống và bún",
-      price: 45000,
-      category: "main",
-        image: "/images/goi_cuon.jpg"
-    },
-    {
-      id: 5,
-        name: "Cháo Lòng",
-        description: "Cháo lòng nóng hổi với lòng heo tươi ngon",
-        price: 40000,
-        category: "main",
-        image: "/images/chaolong.jpg"
-    },
-    {
-        id: 10,
-      name: "Cá Nướng Muối Ớt",
-      description: "Cá nướng muối ớt cay nồng thơm ngon",
-      price: 95000,
-      category: "main",
-        image: "/images/ca_nuong.jpg"
-      },
-      {
-        id: 11,
-        name: "Sườn Nướng",
-        description: "Sườn heo nướng thơm lừng với sốt đặc biệt",
-      price: 85000,
-      category: "main",
-        image: "/images/suon_nuong.jpg"
-      },
-      {
-        id: 12,
-        name: "Chè Bưởi",
-        description: "Chè bưởi mát lạnh, thanh mát",
-        price: 25000,
-        category: "dessert",
-        image: "/images/che_buoi.jpg"
-      },
-      {
-        id: 13,
-        name: "Nhãn Trần",
-        description: "Nhãn trần tươi ngon, ngọt thanh",
-        price: 20000,
-        category: "dessert",
-        image: "/images/nhan_tran.jpg"
-      },
-      {
-        id: 14,
-        name: "Hoa Quả",
-        description: "Đĩa hoa quả tươi ngon, đa dạng",
-        price: 35000,
-        category: "dessert",
-        image: "/images/hoa_qua.jpg"
-      },
-      {
-        id: 15,
-        name: "Sữa Đậu Nành",
-        description: "Sữa đậu nành thơm ngon, bổ dưỡng",
-        price: 12000,
-        category: "drink",
-        image: "/images/sua_dau_nanh.jpg"
-    },
-    {
-      id: 8,
-        name: "Bánh Flan",
-        description: "Bánh flan caramel mềm mịn, ngọt ngào",
-        price: 30000,
-      category: "dessert",
-        image: "/images/flan.jpg"
-    },
-    {
-      id: 9,
-        name: "Cà Phê",
-        description: "Cà phê đậm đà, thơm ngon",
-        price: 15000,
-        category: "drink",
-        image: "/images/cafe.jpg"
-      },
-      {
-        id: 16,
-      name: "Trà Đá",
-      description: "Trà đá mát lạnh giải nhiệt",
-      price: 10000,
-      category: "drink",
-        image: "/images/tra_da.jpg"
-    }
-      ];
-      setMenuItems(defaultItems);
-      localStorage.setItem('menuItems', JSON.stringify(defaultItems));
-  };
-
   const addToCart = (item) => {
-    // Support both logged in and guest users
-    const cartKey = user ? `cart_${user.id}` : 'cart_guest';
-    const cart = JSON.parse(localStorage.getItem(cartKey) || '[]');
-    const existingItem = cart.find(cartItem => cartItem.id === item.id);
+    try {
+      const user = JSON.parse(localStorage.getItem('user') || 'null');
+      const cartKey = user ? `cart_${user.id}` : 'cart_guest';
+      const cart = JSON.parse(localStorage.getItem(cartKey) || '[]');
+      const existingItem = cart.find(cartItem => cartItem.id === item.id);
 
-    if (existingItem) {
-      existingItem.quantity += 1;
-    } else {
-      cart.push({
-        ...item,
-        quantity: 1,
-        image: item.image || 'https://via.placeholder.com/80x80?text=Food'
-      });
+      if (existingItem) {
+        existingItem.quantity += 1;
+      } else {
+        cart.push({
+          ...item,
+          quantity: 1,
+          image: item.image || 'https://via.placeholder.com/80x80?text=Food'
+        });
+      }
+
+      localStorage.setItem(cartKey, JSON.stringify(cart));
+      window.dispatchEvent(new Event('cartUpdated'));
+      setMessage(`Đã thêm ${item.name} vào giỏ hàng!`);
+      setTimeout(() => setMessage(''), 2000);
+    } catch (error) {
+      console.error('Error adding item to cart:', error);
+      setLoadError('Không thể thêm món ăn vào giỏ hàng. Vui lòng thử lại.');
     }
-
-    localStorage.setItem(cartKey, JSON.stringify(cart));
-    // Notify other components (Header) that cart changed
-    window.dispatchEvent(new Event('cartUpdated'));
-
-    // Show local success message
-    setMessage(`Đã thêm ${item.name} vào giỏ hàng!`);
-    setTimeout(() => setMessage(''), 2000);
   };
 
   const categories = [
@@ -272,6 +131,16 @@ const Menu = () => {
     }).format(price);
   };
 
+  if (loading) {
+    return (
+      <div className="section">
+        <div className="container">
+          <p>Đang tải danh sách món ăn...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="section">
       <div className="container">
@@ -293,6 +162,19 @@ const Menu = () => {
         )}
         
         {/* Category Filter */}
+        {loadError && (
+          <div style={{
+            background: '#fff5f5',
+            color: '#c53030',
+            padding: '1rem',
+            borderRadius: '10px',
+            marginBottom: '1.5rem',
+            border: '1px solid #fed7d7',
+            textAlign: 'center'
+          }}>
+            {loadError}
+          </div>
+        )}
         <div style={{ 
           display: 'flex', 
           gap: '1rem', 

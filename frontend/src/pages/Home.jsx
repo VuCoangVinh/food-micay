@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useSearchParams, useNavigate } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useTable } from '../contexts/TableContext';
 import { menuAPI } from '../services/api.js';
 
 const Home = () => {
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
-  const { setTable, currentTable } = useTable();
+  const { setTable } = useTable();
   const [tableLoaded, setTableLoaded] = useState(false);
   const [menuItems, setMenuItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
   
   // Helper function to get image URL
   const getImageUrl = (imagePath) => {
@@ -26,7 +26,7 @@ const Home = () => {
     }
     // If it's an upload path from backend, add backend URL
     if (imagePath.startsWith('/uploads/')) {
-      const backendUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3001';
+      const backendUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'https://food-micay.onrender.com';
       return `${backendUrl}${imagePath}`;
     }
     // If it's a local public path (/images/...), use it directly
@@ -40,40 +40,27 @@ const Home = () => {
   // Load menu items from API
   useEffect(() => {
     const loadMenuItems = async () => {
+      setLoading(true);
+      setLoadError('');
+
       try {
-        setLoading(true);
         const items = await menuAPI.getAll();
-        setMenuItems(items || []);
-        // Store in localStorage for quick access
-        if (items) {
+        if (items && items.length > 0) {
+          setMenuItems(items);
           localStorage.setItem('menuItems', JSON.stringify(items));
+          return;
         }
+
+        throw new Error('Không có dữ liệu menu từ API');
       } catch (error) {
         console.error('Error loading menu items:', error);
-        // Fallback to default items if API fails
-        setMenuItems([
-          {
-            id: 1,
-            name: "Phở Bò Tái",
-            description: "Phở bò truyền thống với thịt bò tái tươi ngon",
-            price: 75000,
-            image: "/images/pho_bo.jpg"
-          },
-          {
-            id: 2,
-            name: "Cơm Tấm Sài Gòn",
-            description: "Cơm tấm với sườn nướng, chả trứng và đồ chua",
-            price: 60000,
-            image: "/images/com_tam.jpg"
-          },
-          {
-            id: 4,
-            name: "Gỏi Cuốn Tôm Thịt",
-            description: "Gỏi cuốn tươi ngon với tôm, thịt, rau sống và bún",
-            price: 45000,
-            image: "/images/goi_cuon.jpg"
-          }
-        ]);
+        const storedMenu = localStorage.getItem('menuItems');
+        if (storedMenu) {
+          setMenuItems(JSON.parse(storedMenu));
+        } else {
+          setMenuItems([]);
+          setLoadError('Không thể tải danh sách món ăn. Vui lòng kiểm tra kết nối đến backend.');
+        }
       } finally {
         setLoading(false);
       }
@@ -117,7 +104,7 @@ const Home = () => {
       loadTableFromAPI();
     }
 
-  }, [searchParams, setTable]);
+  }, [searchParams, setTable, tableLoaded]);
 
   // Add to cart function
   const addToCart = (item) => {
@@ -175,6 +162,21 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {loadError && (
+        <div style={{
+          background: '#fff5f5',
+          color: '#c53030',
+          padding: '1rem',
+          borderRadius: '10px',
+          margin: '1.5rem auto',
+          border: '1px solid #fed7d7',
+          textAlign: 'center',
+          maxWidth: '900px'
+        }}>
+          {loadError}
+        </div>
+      )}
 
       {/* Featured Items */}
       <section className="section">
