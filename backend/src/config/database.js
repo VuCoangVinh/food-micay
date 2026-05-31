@@ -203,7 +203,7 @@ export const initDatabase = async () => {
           description: 'Mì ăn liền kiểu lẩu Thái chua cay nồng, kèm tôm tươi, nấm và rau sống theo mùa.',
           price: 55000,
           category: 'main',
-          image: 'https://images.unsplash.com/photo-1562802378-063ec186a863?w=400&h=300&fit=crop&auto=format'
+          image: 'https://micayseoul.com.vn/wp-content/uploads/2024/07/mi-lau-thai-thap-cam-Photoroom.png'
         },
         {
           name: 'Tokbokki',
