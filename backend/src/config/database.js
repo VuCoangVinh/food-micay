@@ -141,7 +141,128 @@ export const initDatabase = async () => {
     const menuCount = await db.get('SELECT COUNT(*) as count FROM menu_items');
     if (menuCount.count === 0) {
       const defaultMenuItems = [
-
+        // Mì cay
+        {
+          name: 'Mì Cay Cấp Độ 1',
+          description: 'Mì cay nhẹ, thích hợp cho người mới thử, nước dùng đậm đà vừa miệng.',
+          price: 35000,
+          category: 'main',
+          image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400&h=300&fit=crop&auto=format'
+        },
+        {
+          name: 'Mì Cay Cấp Độ 3',
+          description: 'Mì cay vừa, vị cay nồng hòa quyện với nước dùng thơm ngon hấp dẫn.',
+          price: 40000,
+          category: 'main',
+          image: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=400&h=300&fit=crop&auto=format'
+        },
+        {
+          name: 'Mì Cay Cấp Độ 5',
+          description: 'Mì cay cao cấp, thử thách vị giác với độ cay đậm đà đặc trưng.',
+          price: 45000,
+          category: 'main',
+          image: 'https://images.unsplash.com/photo-1617093727343-374698b1b08d?w=400&h=300&fit=crop&auto=format'
+        },
+        {
+          name: 'Mì Cay Cấp Độ 7',
+          description: 'Mì cay cực kỳ, dành cho tín đồ ăn cay thực thụ, thử thách giới hạn bản thân.',
+          price: 50000,
+          category: 'main',
+          image: 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=400&h=300&fit=crop&auto=format'
+        },
+        {
+          name: 'Mì Cay Hải Sản',
+          description: 'Mì cay kết hợp tôm tươi, mực và viên cá, nước dùng hải sản đậm đà thơm ngon.',
+          price: 55000,
+          category: 'main',
+          image: 'https://images.unsplash.com/photo-1534482421-64566f976cfa?w=400&h=300&fit=crop&auto=format'
+        },
+        {
+          name: 'Mì Cay Bò Viên',
+          description: 'Mì cay với bò viên dai giòn, nước dùng bò hầm cay nồng đặc biệt.',
+          price: 50000,
+          category: 'main',
+          image: 'https://images.unsplash.com/photo-1555126634-323283e090fa?w=400&h=300&fit=crop&auto=format'
+        },
+        // Tráng miệng
+        {
+          name: 'Caramen',
+          description: 'Caramen béo ngậy, lớp caramel vàng óng mịn màng, thưởng thức lạnh.',
+          price: 25000,
+          category: 'dessert',
+          image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&h=300&fit=crop&auto=format'
+        },
+        {
+          name: 'Tào Phớ',
+          description: 'Tào phớ mát lạnh mềm mịn, chan nước đường gừng thơm ngọt thanh mát.',
+          price: 20000,
+          category: 'dessert',
+          image: 'https://images.unsplash.com/photo-1514190051997-0f6f39ca5cde?w=400&h=300&fit=crop&auto=format'
+        },
+        {
+          name: 'Chè Đậu Xanh',
+          description: 'Chè đậu xanh nấu mịn với nước cốt dừa béo ngậy, ăn nóng hoặc lạnh đều ngon.',
+          price: 20000,
+          category: 'dessert',
+          image: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&h=300&fit=crop&auto=format'
+        },
+        {
+          name: 'Pudding Trứng',
+          description: 'Pudding trứng kiểu Nhật mềm mịn tan trong miệng, thơm ngậy vị sữa.',
+          price: 25000,
+          category: 'dessert',
+          image: 'https://images.unsplash.com/photo-1551024506-0bccd828d307?w=400&h=300&fit=crop&auto=format'
+        },
+        {
+          name: 'Kem Que Matcha',
+          description: 'Kem que matcha Nhật Bản vị đắng nhẹ đặc trưng, phủ socola giòn bên ngoài.',
+          price: 20000,
+          category: 'dessert',
+          image: 'https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?w=400&h=300&fit=crop&auto=format'
+        },
+        // Đồ uống
+        {
+          name: 'Trà Sữa Trân Châu',
+          description: 'Trà sữa đài loan trân châu đen dẻo dai, có thể tùy chọn mức đường và đá.',
+          price: 35000,
+          category: 'drink',
+          image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop&auto=format'
+        },
+        {
+          name: 'Cà Phê Sữa Đá',
+          description: 'Cà phê phin truyền thống pha với sữa đặc, uống cùng đá viên mát lạnh.',
+          price: 25000,
+          category: 'drink',
+          image: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400&h=300&fit=crop&auto=format'
+        },
+        {
+          name: 'Nước Chanh Dây',
+          description: 'Nước chanh dây tươi chua ngọt tự nhiên, không chất bảo quản, giải khát tuyệt vời.',
+          price: 25000,
+          category: 'drink',
+          image: 'https://images.unsplash.com/photo-1505252585461-04db1eb84625?w=400&h=300&fit=crop&auto=format'
+        },
+        {
+          name: 'Trà Đào Cam Sả',
+          description: 'Trà đào thơm mát pha cùng cam tươi và sả, thanh mát dễ uống.',
+          price: 30000,
+          category: 'drink',
+          image: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&h=300&fit=crop&auto=format'
+        },
+        {
+          name: 'Sinh Tố Bơ',
+          description: 'Sinh tố bơ sáp xay nhuyễn với sữa tươi, béo ngậy thơm ngon bổ dưỡng.',
+          price: 35000,
+          category: 'drink',
+          image: 'https://images.unsplash.com/photo-1638176066600-c58e3571c25c?w=400&h=300&fit=crop&auto=format'
+        },
+        {
+          name: 'Nước Ép Cam Tươi',
+          description: 'Cam tươi ép nguyên chất không thêm đường, giàu vitamin C bổ dưỡng.',
+          price: 30000,
+          category: 'drink',
+          image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&h=300&fit=crop&auto=format'
+        },
       ];
       
       for (const item of defaultMenuItems) {
