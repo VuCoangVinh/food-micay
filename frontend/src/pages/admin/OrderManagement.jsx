@@ -41,41 +41,25 @@ const OrderManagement = () => {
   };
 
   useEffect(() => {
-    loadOrders();
-    
-    // Auto-refresh mỗi 3 giây để cập nhật đơn hàng mới (chỉ khi không có search/filter active)
-    // Giảm thời gian để cập nhật status nhanh hơn sau khi thanh toán
-    refreshIntervalRef.current = setInterval(() => {
-      if (!searchTerm && statusFilter === 'all') {
-        loadOrders(true); // true = silent refresh (không hiển thị loading)
-      }
-    }, 3000); // Giảm từ 5 giây xuống 3 giây
-
-    // Reload khi tab được focus lại
-    const handleFocus = () => {
-      if (!searchTerm && statusFilter === 'all') {
+    if (!searchTerm && statusFilter === 'all') {
+      // Không có search/filter: load ngay và bật auto-refresh 3 giây
+      loadOrders(false);
+      refreshIntervalRef.current = setInterval(() => {
         loadOrders(true);
-      }
-    };
-    window.addEventListener('focus', handleFocus);
-
-    // Cleanup
-    return () => {
-      if (refreshIntervalRef.current) {
+      }, 3000);
+      const handleFocus = () => loadOrders(true);
+      window.addEventListener('focus', handleFocus);
+      return () => {
         clearInterval(refreshIntervalRef.current);
-      }
-      window.removeEventListener('focus', handleFocus);
-    };
-  }, []);
-
-  // Reload khi search/filter thay đổi
-  useEffect(() => {
-    // Debounce search để tránh gọi API quá nhiều khi user đang gõ
-    const timer = setTimeout(() => {
-      loadOrders(false); // Hiển thị loading khi search/filter
-    }, searchTerm ? 500 : 0); // Debounce 500ms cho search, không debounce cho filter
-    
-    return () => clearTimeout(timer);
+        window.removeEventListener('focus', handleFocus);
+      };
+    } else {
+      // Có search hoặc filter: chỉ load 1 lần với debounce, không auto-refresh
+      const timer = setTimeout(() => {
+        loadOrders(false);
+      }, searchTerm ? 500 : 0);
+      return () => clearTimeout(timer);
+    }
   }, [searchTerm, statusFilter]);
 
   useEffect(() => {
@@ -87,7 +71,6 @@ const OrderManagement = () => {
       setIsRefreshing(true);
     }
     try {
-      // Load orders với search và status filter từ backend
       const statusParam = statusFilter !== 'all' ? statusFilter : null;
       const searchParam = (searchTerm && searchTerm.trim()) ? searchTerm.trim() : null;
       const ordersData = await ordersAPI.getAll(statusParam, searchParam);
