@@ -137,38 +137,38 @@ export const initDatabase = async () => {
       console.log('Default tables created');
     }
 
-    // Seed default menu items if not exists
-    const menuCount = await db.get('SELECT COUNT(*) as count FROM menu_items');
-    if (menuCount.count === 0) {
+    // Always re-seed menu items on startup to keep data in sync with code
+    await db.run('DELETE FROM menu_items');
+    {
       const defaultMenuItems = [
         // Mì cay
         {
-          name: 'Mì Cay Cấp Độ 1',
-          description: 'Mì cay nhẹ, thích hợp cho người mới thử, nước dùng đậm đà vừa miệng.',
+          name: 'Mì Kim Chi Bạch Tuộc',
+          description: 'Mì cay nhẹ, hương vị hải sản, nước dùng đậm đà vừa miệng.',
           price: 35000,
           category: 'main',
-          image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400&h=300&fit=crop&auto=format'
+          image: 'https://micayseoul.com.vn/wp-content/uploads/2024/07/kim-chi-bach-tuot.png'
         },
         {
-          name: 'Mì Cay Cấp Độ 3',
+          name: 'Mì Cay Xúc Xích',
           description: 'Mì cay vừa, vị cay nồng hòa quyện với nước dùng thơm ngon hấp dẫn.',
-          price: 40000,
+          price: 35000,
           category: 'main',
-          image: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=400&h=300&fit=crop&auto=format'
+          image: 'https://micayseoul.com.vn/wp-content/uploads/2025/02/Mi-kim-chi-xuc-xich-trung.png'
         },
         {
-          name: 'Mì Cay Cấp Độ 5',
+          name: 'Mì Cay Đùi Gà',
           description: 'Mì cay cao cấp, thử thách vị giác với độ cay đậm đà đặc trưng.',
           price: 45000,
           category: 'main',
-          image: 'https://images.unsplash.com/photo-1617093727343-374698b1b08d?w=400&h=300&fit=crop&auto=format'
+          image: 'https://micayseoul.com.vn/wp-content/uploads/2024/07/mi-kim-chi-dui-ga.png'
         },
         {
-          name: 'Mì Cay Cấp Độ 7',
+          name: 'Mì Lẩu Thái Cá',
           description: 'Mì cay cực kỳ, dành cho tín đồ ăn cay thực thụ, thử thách giới hạn bản thân.',
           price: 50000,
           category: 'main',
-          image: 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=400&h=300&fit=crop&auto=format'
+          image: 'https://micayseoul.com.vn/wp-content/uploads/2024/07/mi-lau-thai-ca-Photoroom.png'
         },
         {
           name: 'Mì Cay Hải Sản',
@@ -210,7 +210,7 @@ export const initDatabase = async () => {
           description: 'Tokbokki cay - bánh gạo Hàn Quốc dai mềm sốt tương ớt gochujang đặc trưng.',
           price: 45000,
           category: 'main',
-          image: 'https://images.unsplash.com/photo-1635363638580-c2809d049eee?w=400&h=300&fit=crop&auto=format'
+          image: 'https://micayseoul.com.vn/wp-content/uploads/2024/07/Tokbokki-Photoroom.png'
         },
         // Tráng miệng
         {
@@ -241,7 +241,7 @@ export const initDatabase = async () => {
           description: 'Trà sữa đài loan trân châu đen dẻo dai, có thể tùy chọn mức đường và đá.',
           price: 35000,
           category: 'drink',
-          image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop&auto=format'
+          image: 'https://cdn.tgdd.vn/Files/2021/08/10/1374160/hoc-2-cach-pha-tra-sua-truyen-thong-thom-ngon-chuan-vi-ai-cung-me-202203031716377004.jpg'
         },
         
         {
@@ -249,14 +249,14 @@ export const initDatabase = async () => {
           description: 'Nước chanh dây tươi chua ngọt tự nhiên, không chất bảo quản, giải khát tuyệt vời.',
           price: 25000,
           category: 'drink',
-          image: 'https://images.unsplash.com/photo-1505252585461-04db1eb84625?w=400&h=300&fit=crop&auto=format'
+          image: 'https://cuonviet.food/wp-content/uploads/2024/10/nuoc-ep-chanh-day-cach-lam.jpg'
         },
         {
           name: 'Trà Đào Cam Sả',
           description: 'Trà đào thơm mát pha cùng cam tươi và sả, thanh mát dễ uống.',
           price: 30000,
           category: 'drink',
-          image: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&h=300&fit=crop&auto=format'
+          image: 'https://www.huongnghiepaau.com/wp-content/uploads/2017/07/tra-dao-cam-sa-ngot-ngao.jpg'
         },
         
         {
@@ -264,7 +264,7 @@ export const initDatabase = async () => {
           description: 'Cam tươi ép nguyên chất không thêm đường, giàu vitamin C bổ dưỡng.',
           price: 30000,
           category: 'drink',
-          image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&h=300&fit=crop&auto=format'
+          image: 'https://cdn.tgdd.vn/Files/2018/11/27/1134029/cong-dung-cua-nuoc-cam-tuoi-va-cach-bao-quan-nuoc-cam-tot-nhat-6.jpg'
         },
       ];
       
