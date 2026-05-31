@@ -184,6 +184,34 @@ export const initDatabase = async () => {
           category: 'main',
           image: 'https://images.unsplash.com/photo-1555126634-323283e090fa?w=400&h=300&fit=crop&auto=format'
         },
+        {
+          name: 'Mì Cay Kim Chi',
+          description: 'Mì cay kết hợp kim chi chua cay đặc trưng Hàn Quốc, nước dùng đậm đà kích thích vị giác.',
+          price: 50000,
+          category: 'main',
+          image: 'https://images.unsplash.com/photo-1583623025817-d180a2221d0a?w=400&h=300&fit=crop&auto=format'
+        },
+        {
+          name: 'Mì Trộn',
+          description: 'Mì trộn sốt đặc biệt, không nước, quyện đều với tương đen, dầu mè và rau thơm thơm ngon.',
+          price: 40000,
+          category: 'main',
+          image: 'https://images.unsplash.com/photo-1617093727343-374698b1b08d?w=400&h=300&fit=crop&auto=format'
+        },
+        {
+          name: 'Mì Lẩu Thái',
+          description: 'Mì ăn liền kiểu lẩu Thái chua cay nồng, kèm tôm tươi, nấm và rau sống theo mùa.',
+          price: 55000,
+          category: 'main',
+          image: 'https://images.unsplash.com/photo-1562802378-063ec186a863?w=400&h=300&fit=crop&auto=format'
+        },
+        {
+          name: 'Tokbokki',
+          description: 'Tokbokki cay - bánh gạo Hàn Quốc dai mềm sốt tương ớt gochujang đặc trưng.',
+          price: 45000,
+          category: 'main',
+          image: 'https://images.unsplash.com/photo-1635363638580-c2809d049eee?w=400&h=300&fit=crop&auto=format'
+        },
         // Tráng miệng
         {
           name: 'Caramen',
