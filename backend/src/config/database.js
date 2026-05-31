@@ -192,11 +192,11 @@ export const initDatabase = async () => {
           image: 'https://micayseoul.com.vn/wp-content/uploads/2024/07/mi-lau-thai-bo-cuon-nam-Photoroom.png'
         },
         {
-          name: 'Mì Trộn',
+          name: 'Mì Trộn Bò',
           description: 'Mì trộn sốt đặc biệt, không nước, quyện đều với tương đen, dầu mè và rau thơm thơm ngon.',
           price: 40000,
           category: 'main',
-          image: 'https://images.unsplash.com/photo-1617093727343-374698b1b08d?w=400&h=300&fit=crop&auto=format'
+          image: 'https://micayseoul.com.vn/wp-content/uploads/2024/07/mi-tron-bo-Photoroom.png'
         },
         {
           name: 'Mì Lẩu Thái',
