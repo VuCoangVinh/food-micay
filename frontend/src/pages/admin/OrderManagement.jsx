@@ -68,7 +68,7 @@ const OrderManagement = () => {
 
   useEffect(() => {
     filterAndSortOrders();
-  }, [orders, sortBy, sortOrder]);
+  }, [orders, sortBy, sortOrder, searchTerm, statusFilter]);
 
   const loadOrders = async (silent = false) => {
     if (!silent) {
@@ -134,12 +134,20 @@ const OrderManagement = () => {
   const filterAndSortOrders = () => {
     let filtered = [...orders];
 
-    // KHÔNG ẩn đơn hàng pending nữa - hiển thị tất cả để admin thấy
-    // Chỉ filter theo statusFilter nếu user chọn filter cụ thể
-
-    // Backend đã filter theo status và search, nhưng để chắc chắn filter lại ở client
     if (statusFilter !== 'all') {
       filtered = filtered.filter(order => order.status === statusFilter);
+    }
+
+    // Client-side search (fallback nếu backend search có vấn đề)
+    if (searchTerm && searchTerm.trim()) {
+      const term = searchTerm.trim().toLowerCase();
+      filtered = filtered.filter(order =>
+        String(order.id).includes(term) ||
+        (order.userPhone && order.userPhone.toLowerCase().includes(term)) ||
+        (order.tableNumber && order.tableNumber.toLowerCase().includes(term)) ||
+        (order.userName && order.userName.toLowerCase().includes(term)) ||
+        String(order.total).includes(term)
+      );
     }
 
     // Sort
@@ -511,7 +519,7 @@ const OrderManagement = () => {
           </div>
         </div>
 
-        {filteredOrders.length === 0 && orders.length > 0 && (
+        {filteredOrders.length === 0 && (orders.length > 0 || searchTerm) && (
           <div style={{
             background: 'rgba(255, 255, 255, 0.95)',
             borderRadius: '16px',
@@ -520,14 +528,14 @@ const OrderManagement = () => {
             boxShadow: '0 5px 15px rgba(0, 0, 0, 0.08)'
           }}>
             <p style={{ color: '#718096', fontSize: '1.1rem' }}>
-              {searchTerm 
+              {searchTerm
                 ? `Không tìm thấy đơn hàng nào với từ khóa "${searchTerm}"`
                 : 'Không tìm thấy đơn hàng nào phù hợp với bộ lọc'}
             </p>
           </div>
         )}
 
-        {filteredOrders.length === 0 && orders.length === 0 ? (
+        {filteredOrders.length === 0 && !searchTerm && orders.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '3rem' }}>
             <p>Chưa có đơn hàng nào.</p>
           </div>

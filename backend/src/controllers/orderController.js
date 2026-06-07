@@ -18,7 +18,7 @@ export const getAllOrders = async (req, res) => {
 
     if (search) {
       // Search theo ID, số điện thoại, số bàn, và tổng tiền
-      conditions.push('(id LIKE ? OR customer_phone LIKE ? OR table_number LIKE ? OR CAST(total_price AS TEXT) LIKE ?)');
+      conditions.push('(CAST(id AS TEXT) LIKE ? OR customer_phone LIKE ? OR table_number LIKE ? OR CAST(total_price AS TEXT) LIKE ?)');
       const searchTerm = `%${search}%`;
       params.push(searchTerm, searchTerm, searchTerm, searchTerm);
     }
