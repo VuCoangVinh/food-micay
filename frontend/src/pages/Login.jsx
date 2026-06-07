@@ -85,7 +85,7 @@ const Login = () => {
               Đăng Nhập
             </h2>
             <p style={{ color: '#718096', fontSize: '0.9rem' }}>
-              Đăng nhập để xem lịch sử đơn hàng của bạn
+              Vui lòng đăng nhập với vai trò khách hàng
             </p>
           </div>
 
