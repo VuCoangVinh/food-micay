@@ -145,24 +145,26 @@ const OrderManagement = () => {
       const term = norm(raw);
 
       if (raw.startsWith('#')) {
-        // Tìm chính xác theo ID: "#3" → chỉ match đơn hàng ID=3, ID=30...
-        const idTerm = term.slice(1); // bỏ '#'
+        // "#3" → chỉ tìm theo ID
+        const idTerm = term.slice(1);
         filtered = filtered.filter(order =>
           String(order.id).startsWith(idTerm)
         );
+      } else if (raw.startsWith('=')) {
+        // "=35000" → chỉ tìm theo tổng tiền
+        const priceTerm = term.slice(1);
+        filtered = filtered.filter(order =>
+          String(order.total).includes(priceTerm)
+        );
       } else {
-        // Tìm theo tất cả trường
-        // "bàn 4" → cũng tìm "4" để khớp đơn hàng tự điền số bàn
+        // Tìm theo tất cả trường (trừ giá để tránh nhầm)
         const termForTable = term.startsWith('bàn ') ? term.slice(4) : term;
-
         filtered = filtered.filter(order =>
           String(order.id).includes(term) ||
           norm(order.userPhone).includes(term) ||
           norm(order.tableNumber).includes(term) ||
           norm(order.tableNumber).includes(termForTable) ||
-          norm(order.userName).includes(term) ||
-          // Tìm theo tổng tiền: chỉ khi là số thuần và >= 4 chữ số (tránh "3" khớp "35.000đ")
-          (/^\d+$/.test(term) && term.length >= 4 && String(order.total).includes(term))
+          norm(order.userName).includes(term)
         );
       }
     }
@@ -448,7 +450,7 @@ const OrderManagement = () => {
             <Search size={20} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#718096' }} />
             <input
               type="text"
-              placeholder="Tìm kiếm theo ID, SĐT, số bàn, tổng tiền..."
+              placeholder="#ID  |  SĐT  |  Bàn 3  |  =35000 (tổng tiền)"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               style={{
