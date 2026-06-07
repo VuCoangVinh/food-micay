@@ -4,11 +4,12 @@ export const getAllMenuItems = async (req, res) => {
   try {
     const { category } = req.query;
     
-    let query = 'SELECT * FROM menu_items ORDER BY created_at DESC';
+    const categoryOrder = `CASE category WHEN 'main' THEN 0 WHEN 'drink' THEN 1 WHEN 'dessert' THEN 2 ELSE 99 END`;
+    let query = `SELECT * FROM menu_items ORDER BY ${categoryOrder}, created_at DESC`;
     let params = [];
 
     if (category && category !== 'all') {
-      query = 'SELECT * FROM menu_items WHERE category = ? ORDER BY created_at DESC';
+      query = `SELECT * FROM menu_items WHERE category = ? ORDER BY ${categoryOrder}, created_at DESC`;
       params = [category];
     }
 
