@@ -17,11 +17,16 @@ export const getAllOrders = async (req, res) => {
     }
 
     if (search) {
-      // Strip dấu "#" để hỗ trợ tìm "#1" → "1"
-      const cleanSearch = search.replace(/^#/, '');
-      const searchTerm = `%${cleanSearch}%`;
-      conditions.push('(CAST(id AS TEXT) LIKE ? OR customer_phone LIKE ? OR table_number LIKE ? OR CAST(total_price AS TEXT) LIKE ?)');
-      params.push(searchTerm, searchTerm, searchTerm, searchTerm);
+      if (search.startsWith('#')) {
+        // "#3" → chỉ tìm theo ID
+        const idSearch = `${search.slice(1)}%`;
+        conditions.push('CAST(id AS TEXT) LIKE ?');
+        params.push(idSearch);
+      } else {
+        const searchTerm = `%${search}%`;
+        conditions.push('(CAST(id AS TEXT) LIKE ? OR customer_phone LIKE ? OR table_number LIKE ? OR CAST(total_price AS TEXT) LIKE ?)');
+        params.push(searchTerm, searchTerm, searchTerm, searchTerm);
+      }
     }
 
     // Add WHERE clause if there are conditions

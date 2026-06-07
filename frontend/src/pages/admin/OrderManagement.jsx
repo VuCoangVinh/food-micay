@@ -140,27 +140,29 @@ const OrderManagement = () => {
 
     // Client-side search
     if (searchTerm && searchTerm.trim()) {
-      // Normalize Unicode (xử lý tiếng Việt NFC/NFD) và lowercase
       const norm = (s) => (s ? String(s).normalize('NFC').toLowerCase() : '');
-      const term = norm(searchTerm.trim());
-      // Strip dấu "#" để hỗ trợ tìm dạng "#1"
-      const termNoHash = term.replace(/^#/, '');
-      // Hỗ trợ "bàn 4" → cũng tìm "4" (đơn hàng tự điền số bàn)
-      const termForTable = term.startsWith('bàn ') ? term.slice(4) : term;
+      const raw = searchTerm.trim();
+      const term = norm(raw);
 
-      filtered = filtered.filter(order =>
-        // ID: hỗ trợ "#1", "1"
-        String(order.id).includes(termNoHash) ||
-        // SĐT
-        norm(order.userPhone).includes(term) ||
-        // Số bàn: "bàn 4" khớp "Bàn 4" và "4"; "4" khớp "Bàn 4" và "4"
-        norm(order.tableNumber).includes(term) ||
-        norm(order.tableNumber).includes(termForTable) ||
-        // Tên khách
-        norm(order.userName).includes(term) ||
-        // Tổng tiền
-        String(order.total).includes(termNoHash)
-      );
+      if (raw.startsWith('#')) {
+        // Tìm chính xác theo ID: "#3" → chỉ match đơn hàng ID=3, ID=30...
+        const idTerm = term.slice(1); // bỏ '#'
+        filtered = filtered.filter(order =>
+          String(order.id).startsWith(idTerm)
+        );
+      } else {
+        // Tìm theo tất cả trường
+        // "bàn 4" → cũng tìm "4" để khớp đơn hàng tự điền số bàn
+        const termForTable = term.startsWith('bàn ') ? term.slice(4) : term;
+
+        filtered = filtered.filter(order =>
+          String(order.id).includes(term) ||
+          norm(order.userPhone).includes(term) ||
+          norm(order.tableNumber).includes(term) ||
+          norm(order.tableNumber).includes(termForTable) ||
+          norm(order.userName).includes(term)
+        );
+      }
     }
 
     // Sort
