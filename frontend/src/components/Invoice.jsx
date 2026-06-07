@@ -14,13 +14,6 @@ const Invoice = ({ order, onClose, showActions = true }) => {
     );
   }
   
-  // Debug: Log order data
-  console.log('📄 Invoice Component - Order Data:', order);
-  console.log('   Order ID:', order?.id);
-  console.log('   Order items:', order?.items);
-  console.log('   Order total:', order?.total || order?.total_price || order?.totalPrice);
-  console.log('   Order status:', order?.status);
-
   const formatPrice = (price) => {
     if (!price && price !== 0) return '0 ₫';
     return new Intl.NumberFormat('vi-VN', {
@@ -66,28 +59,17 @@ const Invoice = ({ order, onClose, showActions = true }) => {
     }
   } catch (e) {
     console.error('❌ Error parsing items:', e);
-    console.error('   Items value:', order.items);
     items = [];
   }
-  
-  console.log('📄 Parsed items:', items);
-  console.log('   Items count:', items.length);
 
   const handlePrint = () => {
-    console.log('🖨️ Starting print process...');
-    console.log('Order data:', order);
-    console.log('Items:', items);
-    
     // Get invoice content
     const invoiceContent = document.getElementById('invoice-content');
     
     if (!invoiceContent) {
-      console.error('❌ Invoice content not found!');
       alert('Không tìm thấy nội dung hóa đơn để in');
       return;
     }
-    
-    console.log('✅ Invoice content found');
     
     // Create a clone of invoice content and append to body for printing
     // This ensures it's not affected by modal styles
@@ -182,9 +164,7 @@ const Invoice = ({ order, onClose, showActions = true }) => {
     
     printContainer.appendChild(clonedContent);
     document.body.appendChild(printContainer);
-    
-    console.log('✅ Print container created and appended to body');
-    
+
     // Wait a bit for rendering, then print
     setTimeout(() => {
       window.print();
@@ -193,7 +173,6 @@ const Invoice = ({ order, onClose, showActions = true }) => {
       setTimeout(() => {
         if (printContainer && printContainer.parentNode) {
           printContainer.parentNode.removeChild(printContainer);
-          console.log('✅ Print container removed');
         }
       }, 500);
     }, 300);
@@ -620,10 +599,6 @@ const Invoice = ({ order, onClose, showActions = true }) => {
 };
 
 export default Invoice;
-
-
-
-
 
 
 

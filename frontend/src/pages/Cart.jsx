@@ -41,50 +41,8 @@ const Cart = () => {
     if (storedCart) {
       let items = JSON.parse(storedCart);
       
-      // Mapping tên món với ảnh local
-      const imageMapping = {
-        "Phở Bò Tái": "/images/pho_bo.jpg",
-        "Cơm Tấm Sài Gòn": "/images/com_tam.jpg",
-        "Bún Mọc": "/images/bunmoc.jpg",
-        "Bún Chả": "/images/buncha.jpg",
-        "Gỏi Cuốn Tôm Thịt": "/images/goi_cuon.jpg",
-        "Cháo Lòng": "/images/chaolong.jpg",
-        "Cá Nướng Muối Ớt": "/images/ca_nuong.jpg",
-        "Sườn Nướng": "/images/suon_nuong.jpg",
-        "Thịt Nướng BBQ": "/images/suon_nuong.jpg",
-        "Bánh Flan": "/images/flan.jpg",
-        "Flan Caramel": "/images/flan.jpg",
-        "Chè Bưởi": "/images/che_buoi.jpg",
-        "Nhãn Trần": "/images/nhan_tran.jpg",
-        "Hoa Quả": "/images/hoa_qua.jpg",
-        "Sữa Đậu Nành": "/images/sua_dau_nanh.jpg",
-        "Cà Phê": "/images/cafe.jpg",
-        "Trà Đá": "/images/tra_da.jpg",
-        "Chè Ba Màu": "/images/che_buoi.jpg"
-      };
-      
-      // Cập nhật ảnh cho các món trong giỏ hàng
       let updated = false;
-      
-      // Thay thế "Chè Ba Màu" bằng "Chè Bưởi" nếu có
       items = items.map(item => {
-        if (item.name === "Chè Ba Màu") {
-          updated = true;
-          return {
-            ...item,
-            name: "Chè Bưởi",
-            image: "/images/che_buoi.jpg"
-          };
-        }
-        return item;
-      });
-      items = items.map(item => {
-        // Nếu món có trong mapping và chưa có ảnh hoặc có placeholder
-        if (imageMapping[item.name] && (!item.image || item.image.includes('placeholder') || item.image.includes('via.placeholder'))) {
-          updated = true;
-          return { ...item, image: imageMapping[item.name] };
-        }
-        // Nếu món không có ảnh, lấy từ menu items
         if (!item.image || item.image.includes('placeholder') || item.image.includes('via.placeholder')) {
           const menuItems = JSON.parse(localStorage.getItem('menuItems') || '[]');
           const menuItem = menuItems.find(menu => menu.id === item.id || menu.name === item.name);
@@ -226,7 +184,7 @@ const Cart = () => {
                 backgroundColor: '#f8f9fa'
               }}>
               <img 
-                  src={getImageUrl(item.image) || '/images/pho_bo.jpg'} 
+                  src={getImageUrl(item.image)} 
                 alt={item.name}
                   onError={(e) => {
                     // Fallback nếu ảnh không load được

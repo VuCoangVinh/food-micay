@@ -80,7 +80,6 @@ const Orders = () => {
       
       // Nếu có orderId từ query params (sau khi thanh toán), CHỈ load đơn hàng đó và return
       if (orderId) {
-        console.log('🔍 Loading specific order by ID:', orderId);
         try {
           const order = await ordersAPI.getById(orderId);
           let items = [];
@@ -111,7 +110,6 @@ const Orders = () => {
             number_of_guests: order.number_of_guests,
             payment_method: order.payment_method
           };
-          console.log('✅ Setting single order:', transformedOrder.id);
           setOrders([transformedOrder]);
           setShowOnlyLatest(true);
           setLoading(false);

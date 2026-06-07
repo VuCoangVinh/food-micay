@@ -637,11 +637,6 @@ const OrderManagement = () => {
                   {order.status === 'completed' && (
                     <button
                       onClick={() => {
-                        console.log('📄 Opening invoice for order:', order);
-                        console.log('   Order ID:', order.id);
-                        console.log('   Order items:', order.items);
-                        console.log('   Order total:', order.total);
-                        // Đảm bảo order data đầy đủ trước khi truyền cho Invoice
                         const invoiceOrder = {
                           ...order,
                           // Đảm bảo có đầy đủ các field cần thiết
@@ -663,7 +658,6 @@ const OrderManagement = () => {
                           date: order.createdAt || order.created_at || order.date,
                           status: order.status
                         };
-                        console.log('📄 Invoice order data:', invoiceOrder);
                         setSelectedOrder(invoiceOrder);
                       }}
                       style={{

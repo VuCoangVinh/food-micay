@@ -88,7 +88,6 @@ const Home = () => {
             status: table.status
           };
           setTable(tableData);
-          console.log('Table loaded from QR code:', tableData);
         } catch (error) {
           console.error('Error loading table from API:', error);
           // Fallback to basic table data

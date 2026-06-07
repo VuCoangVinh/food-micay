@@ -251,18 +251,10 @@ const MenuManagement = () => {
         };
 
         if (editingItem) {
-          // Update existing item
-          console.log('Updating menu item:', editingItem.id, itemData);
-          const updated = await menuAPI.update(editingItem.id, itemData);
-          console.log('Update result:', updated);
-          // Reload menu items to ensure consistency
+          await menuAPI.update(editingItem.id, itemData);
           await loadMenuItems();
         } else {
-          // Add new item
-          console.log('Creating new menu item:', itemData);
-          const newItem = await menuAPI.create(itemData);
-          console.log('Create result:', newItem);
-          // Reload menu items to ensure consistency
+          await menuAPI.create(itemData);
           await loadMenuItems();
         }
         
@@ -303,10 +295,7 @@ const MenuManagement = () => {
       try {
         setLoading(true);
         setError('');
-        console.log('Deleting menu item:', id);
         await menuAPI.delete(id);
-        console.log('Delete successful');
-        // Reload menu items to ensure consistency
         await loadMenuItems();
         setLoading(false);
       } catch (error) {
