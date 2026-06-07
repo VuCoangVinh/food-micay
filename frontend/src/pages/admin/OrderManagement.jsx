@@ -151,10 +151,11 @@ const OrderManagement = () => {
           String(order.id).startsWith(idTerm)
         );
       } else if (raw.startsWith('=')) {
-        // "=35000" → chỉ tìm theo tổng tiền
-        const priceTerm = term.slice(1);
+        // "=35000" hoặc "=35.000" → chỉ tìm theo tổng tiền
+        // Strip dấu chấm/phẩy ngăn cách nghìn để "35.000" khớp 35000
+        const priceTerm = term.slice(1).replace(/[.,\s]/g, '');
         filtered = filtered.filter(order =>
-          String(order.total).includes(priceTerm)
+          String(Math.round(order.total)).includes(priceTerm)
         );
       } else {
         // Tìm theo tất cả trường (trừ giá để tránh nhầm)
@@ -450,7 +451,7 @@ const OrderManagement = () => {
             <Search size={20} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#718096' }} />
             <input
               type="text"
-              placeholder="#ID  |  SĐT  |  Bàn 3  |  =35000 (tổng tiền)"
+              placeholder="#ID  |  SĐT  |  Bàn 3  |  =35000 hoặc =35.000"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               style={{

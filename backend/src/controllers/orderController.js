@@ -23,9 +23,10 @@ export const getAllOrders = async (req, res) => {
         conditions.push('CAST(id AS TEXT) LIKE ?');
         params.push(idSearch);
       } else if (search.startsWith('=')) {
-        // "=35000" → chỉ tìm theo tổng tiền
-        const priceSearch = `%${search.slice(1)}%`;
-        conditions.push('CAST(total_price AS TEXT) LIKE ?');
+        // "=35000" hoặc "=35.000" → chỉ tìm theo tổng tiền, strip dấu chấm/phẩy
+        const cleanPrice = search.slice(1).replace(/[.,\s]/g, '');
+        const priceSearch = `%${cleanPrice}%`;
+        conditions.push('REPLACE(REPLACE(CAST(CAST(total_price AS INTEGER) AS TEXT), ",", ""), ".", "") LIKE ?');
         params.push(priceSearch);
       } else {
         const searchTerm = `%${search}%`;
