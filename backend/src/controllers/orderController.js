@@ -17,9 +17,10 @@ export const getAllOrders = async (req, res) => {
     }
 
     if (search) {
-      // Search theo ID, số điện thoại, số bàn, và tổng tiền
+      // Strip dấu "#" để hỗ trợ tìm "#1" → "1"
+      const cleanSearch = search.replace(/^#/, '');
+      const searchTerm = `%${cleanSearch}%`;
       conditions.push('(CAST(id AS TEXT) LIKE ? OR customer_phone LIKE ? OR table_number LIKE ? OR CAST(total_price AS TEXT) LIKE ?)');
-      const searchTerm = `%${search}%`;
       params.push(searchTerm, searchTerm, searchTerm, searchTerm);
     }
 

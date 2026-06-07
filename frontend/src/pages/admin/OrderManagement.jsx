@@ -138,15 +138,26 @@ const OrderManagement = () => {
       filtered = filtered.filter(order => order.status === statusFilter);
     }
 
-    // Client-side search (fallback nếu backend search có vấn đề)
+    // Client-side search
     if (searchTerm && searchTerm.trim()) {
-      const term = searchTerm.trim().toLowerCase();
+      // Normalize Unicode (xử lý tiếng Việt NFC/NFD) và lowercase
+      const norm = (s) => (s ? String(s).normalize('NFC').toLowerCase() : '');
+      const term = norm(searchTerm.trim());
+      // Strip dấu "#" để hỗ trợ tìm dạng "#1"
+      const termNoHash = term.replace(/^#/, '');
+
       filtered = filtered.filter(order =>
-        String(order.id).includes(term) ||
-        (order.userPhone && order.userPhone.toLowerCase().includes(term)) ||
-        (order.tableNumber && order.tableNumber.toLowerCase().includes(term)) ||
-        (order.userName && order.userName.toLowerCase().includes(term)) ||
-        String(order.total).includes(term)
+        // ID: hỗ trợ "#1", "1"
+        String(order.id).includes(termNoHash) ||
+        // SĐT
+        norm(order.userPhone).includes(term) ||
+        // Số bàn: "bàn 1", "Bàn 1", "1"
+        norm(order.tableNumber).includes(term) ||
+        norm(order.tableNumber).includes(termNoHash) ||
+        // Tên khách
+        norm(order.userName).includes(term) ||
+        // Tổng tiền
+        String(order.total).includes(termNoHash)
       );
     }
 
