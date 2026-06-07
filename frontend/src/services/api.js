@@ -243,15 +243,4 @@ export const uploadAPI = {
   }
 };
 
-// Payment API
-export const paymentAPI = {
-  // E-wallet payment
-  processEWalletPayment: async (orderId, phoneNumber, walletType) => {
-    return apiCall('/payment/ewallet', {
-      method: 'POST',
-      body: JSON.stringify({ orderId, phoneNumber, walletType })
-    });
-  }
-};
-
 

@@ -8,8 +8,6 @@ import orderRoutes from './routes/orders.js';
 import tableRoutes from './routes/tables.js';
 import userRoutes from './routes/users.js';
 import uploadRoutes from './routes/upload.js';
-import paymentRoutes from './routes/payment.js';
-import revenueRoutes from './routes/revenue.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -51,8 +49,6 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/tables', tableRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/upload', uploadRoutes);
-app.use('/api/payment', paymentRoutes);
-app.use('/api/revenue', revenueRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
