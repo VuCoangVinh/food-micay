@@ -110,8 +110,10 @@ const Menu = () => {
     { id: 'drink', name: 'Đồ Uống' }
   ];
 
-  const filteredItems = selectedCategory === 'all' 
-    ? menuItems 
+  const categoryOrder = { main: 0, drink: 1, dessert: 2 };
+
+  const filteredItems = selectedCategory === 'all'
+    ? [...menuItems].sort((a, b) => (categoryOrder[a.category] ?? 99) - (categoryOrder[b.category] ?? 99))
     : menuItems.filter(item => item.category === selectedCategory);
 
   // Phân trang
