@@ -16,13 +16,12 @@ export const TableProvider = ({ children }) => {
 
   useEffect(() => {
     const loadTable = async () => {
-      // Check URL for table parameter first, so QR code always overrides stale localStorage data
+      // Check URL for table parameter first, so QR code always overrides stale data
       const urlParams = new URLSearchParams(window.location.search);
       const tableId = urlParams.get('table');
 
       if (tableId) {
         try {
-          // Try to load from API
           const table = await tablesAPI.getById(tableId);
           const tableData = {
             id: table.id,
@@ -31,23 +30,28 @@ export const TableProvider = ({ children }) => {
             status: table.status
           };
           setCurrentTable(tableData);
-          localStorage.setItem('currentTable', JSON.stringify(tableData));
+          // Dùng sessionStorage: tự xóa khi đóng tab, không rò sang phiên khác
+          sessionStorage.setItem('currentTable', JSON.stringify(tableData));
+          // Xóa localStorage cũ nếu có
+          localStorage.removeItem('currentTable');
           return;
         } catch (error) {
           console.error('Error loading table from API:', error);
-          // Fallback to basic table data
           const table = { id: tableId, number: `Bàn ${tableId}` };
           setCurrentTable(table);
-          localStorage.setItem('currentTable', JSON.stringify(table));
+          sessionStorage.setItem('currentTable', JSON.stringify(table));
+          localStorage.removeItem('currentTable');
           return;
         }
       }
 
-      // No table param in URL, fallback to localStorage
-      const storedTable = localStorage.getItem('currentTable');
+      // Không có table param trong URL: chỉ dùng sessionStorage (không localStorage)
+      const storedTable = sessionStorage.getItem('currentTable');
       if (storedTable) {
         setCurrentTable(JSON.parse(storedTable));
       }
+      // Xóa localStorage cũ để tránh bàn cũ bị load lại
+      localStorage.removeItem('currentTable');
     };
 
     loadTable();
@@ -56,14 +60,16 @@ export const TableProvider = ({ children }) => {
   const setTable = (table) => {
     setCurrentTable(table);
     if (table) {
-      localStorage.setItem('currentTable', JSON.stringify(table));
+      sessionStorage.setItem('currentTable', JSON.stringify(table));
     } else {
-      localStorage.removeItem('currentTable');
+      sessionStorage.removeItem('currentTable');
     }
+    localStorage.removeItem('currentTable');
   };
 
   const clearTable = () => {
     setCurrentTable(null);
+    sessionStorage.removeItem('currentTable');
     localStorage.removeItem('currentTable');
   };
 
@@ -75,6 +81,3 @@ export const TableProvider = ({ children }) => {
 
   return <TableContext.Provider value={value}>{children}</TableContext.Provider>;
 };
-
-
-
