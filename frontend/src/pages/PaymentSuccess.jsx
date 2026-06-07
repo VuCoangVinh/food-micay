@@ -335,19 +335,6 @@ const PaymentSuccess = () => {
               </button>
             )}
           </div>
-
-          {/* Note */}
-          <p style={{ 
-            color: '#718096', 
-            fontSize: '0.9rem', 
-            marginTop: '2rem',
-            padding: '1rem',
-            background: '#e6fffa',
-            borderRadius: '8px',
-            border: '1px solid #9ae6b4'
-          }}>
-            📧 Email xác nhận đã được gửi đến địa chỉ email của bạn (nếu đã cấu hình).
-          </p>
         </div>
       </div>
 

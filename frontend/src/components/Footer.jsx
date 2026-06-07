@@ -4,8 +4,8 @@ const Footer = () => {
   return (
     <footer className="footer">
       <div className="container">
-        <p>&copy; 2025 FoodOrder. Tất cả quyền được bảo lưu.</p>
-        <p>🍜 Nhà hàng ẩm thực Việt Nam - Hương vị truyền thống, chất lượng hiện đại</p>
+        <p>&copy; 2026 FoodOrder. Tất cả quyền được bảo lưu.</p>
+        <p>🍜 Nhà hàng Mỳ Cay Việt Nam - Hương vị truyền thống, thơm ngon, chất lượng</p>
       </div>
     </footer>
   );
