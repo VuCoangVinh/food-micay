@@ -6,7 +6,10 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const dbPath = path.join(__dirname, '../../database.sqlite');
+// Trên Render production dùng persistent disk /data, local dùng thư mục project
+const dbPath = process.env.NODE_ENV === 'production'
+  ? '/data/database.sqlite'
+  : path.join(__dirname, '../../database.sqlite');
 
 // Create database connection
 const db = new sqlite3.Database(dbPath, (err) => {

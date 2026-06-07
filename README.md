@@ -27,8 +27,7 @@ Hệ thống quản lý đặt món cho nhà hàng với giao diện người d�
 - Node.js + Express
 - SQLite (Database)
 - JWT (Authentication)
-- Thanh toán thẻ nội bộ / tiền mặt
-- Nodemailer (Email)
+- Thanh toán tiền mặt
 
 ### Frontend
 - React 19
@@ -83,7 +82,7 @@ EMAIL_PASS=your-app-password
 ### Frontend (.env)
 Tạo file `frontend/.env`:
 ```env
-VITE_API_URL=http://localhost:3001/api
+VITE_API_URL=https://food-micay.onrender.com
 ```
 
 ## ▶️ Chạy Ứng Dụng
