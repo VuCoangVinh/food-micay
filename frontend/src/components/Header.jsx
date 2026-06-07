@@ -96,11 +96,11 @@ const Header = () => {
                     display: 'flex',
                     alignItems: 'center',
                     gap: '0.4rem',
-                    background: 'rgba(255,255,255,0.15)',
-                    border: '1px solid rgba(255,255,255,0.3)',
+                    background: 'rgba(102,126,234,0.1)',
+                    border: '2px solid #667eea',
                     borderRadius: '20px',
                     padding: '0.4rem 0.9rem',
-                    color: 'white',
+                    color: '#667eea',
                     cursor: 'pointer',
                     fontSize: '0.9rem',
                     fontWeight: '500'
@@ -171,17 +171,17 @@ const Header = () => {
                 )}
               </div>
             ) : (
-              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }} className="desktop-auth-btns">
+              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                 <Link
                   to="/login"
                   style={{
                     padding: '0.4rem 1rem',
                     borderRadius: '20px',
-                    border: '1px solid rgba(255,255,255,0.5)',
-                    color: 'white',
+                    border: '2px solid #667eea',
+                    color: '#667eea',
                     textDecoration: 'none',
                     fontSize: '0.9rem',
-                    fontWeight: '500'
+                    fontWeight: '600'
                   }}
                 >
                   Đăng nhập
@@ -191,8 +191,8 @@ const Header = () => {
                   style={{
                     padding: '0.4rem 1rem',
                     borderRadius: '20px',
-                    background: 'white',
-                    color: '#667eea',
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    color: 'white',
                     textDecoration: 'none',
                     fontSize: '0.9rem',
                     fontWeight: '600'
