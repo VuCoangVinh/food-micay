@@ -456,7 +456,7 @@ const OrderManagement = () => {
             <Search size={20} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#718096' }} />
             <input
               type="text"
-              placeholder="#ID  |  SĐT  |  Bàn 3  |  =35000 hoặc =35.000"
+              placeholder="#ID  |  SĐT  | Số Bàn   |  Tổng Tiền"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               style={{
