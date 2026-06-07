@@ -145,15 +145,17 @@ const OrderManagement = () => {
       const term = norm(searchTerm.trim());
       // Strip dấu "#" để hỗ trợ tìm dạng "#1"
       const termNoHash = term.replace(/^#/, '');
+      // Hỗ trợ "bàn 4" → cũng tìm "4" (đơn hàng tự điền số bàn)
+      const termForTable = term.startsWith('bàn ') ? term.slice(4) : term;
 
       filtered = filtered.filter(order =>
         // ID: hỗ trợ "#1", "1"
         String(order.id).includes(termNoHash) ||
         // SĐT
         norm(order.userPhone).includes(term) ||
-        // Số bàn: "bàn 1", "Bàn 1", "1"
+        // Số bàn: "bàn 4" khớp "Bàn 4" và "4"; "4" khớp "Bàn 4" và "4"
         norm(order.tableNumber).includes(term) ||
-        norm(order.tableNumber).includes(termNoHash) ||
+        norm(order.tableNumber).includes(termForTable) ||
         // Tên khách
         norm(order.userName).includes(term) ||
         // Tổng tiền

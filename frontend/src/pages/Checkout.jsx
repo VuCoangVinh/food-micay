@@ -120,7 +120,10 @@ const Checkout = () => {
         customerName: user?.name || 'Khách hàng',
         customerEmail: user?.email || null,
         customerPhone: formData.phone && formData.phone.trim() ? formData.phone.trim() : null,
-        tableNumber: formData.tableNumber.trim(),
+        // Chuẩn hóa: "4" → "Bàn 4", "Bàn 4" giữ nguyên
+        tableNumber: (/^\d+$/.test(formData.tableNumber.trim())
+          ? `Bàn ${formData.tableNumber.trim()}`
+          : formData.tableNumber.trim()),
         numberOfGuests: parseInt(formData.numberOfGuests),
         items: cartItems,
         totalPrice: getTotalPrice(),
