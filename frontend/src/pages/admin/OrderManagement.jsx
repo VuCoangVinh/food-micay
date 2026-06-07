@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { CheckCircle, XCircle, Clock, Search, Filter, ArrowUpDown, X, TrendingUp, ShoppingCart, FileText, Printer, X as XIcon, RefreshCw } from 'lucide-react';
 import { ordersAPI } from '../../services/api.js';
 import Invoice from '../../components/Invoice.jsx';
 import { formatDateTimeVN, parseSqlDatetimeAsUtc } from '../../utils/date.js';
+import { useAuth } from '../../contexts/AuthContext.jsx';
 
 const OrderManagement = () => {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
   const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -108,14 +112,14 @@ const OrderManagement = () => {
       setOrders(transformedOrders);
       setLastRefreshTime(new Date());
     } catch (error) {
-      console.error('Error loading orders from API, falling back to localStorage:', error);
-      // Fallback to localStorage
-      const stored = localStorage.getItem('orders');
-      if (stored) {
-        setOrders(JSON.parse(stored));
-      } else {
-        setOrders([]);
+      console.error('Error loading orders:', error);
+      // Nếu token hết hạn hoặc không hợp lệ → tự động logout và redirect login
+      if (error.status === 401 || error.status === 403) {
+        logout();
+        navigate('/admin/login');
+        return;
       }
+      setOrders([]);
     } finally {
       if (!silent) {
         setIsRefreshing(false);
@@ -182,6 +186,11 @@ const OrderManagement = () => {
       setOrders(updated);
     } catch (error) {
       console.error('Error updating order status:', error);
+      if (error.status === 401 || error.status === 403) {
+        logout();
+        navigate('/admin/login');
+        return;
+      }
       alert(error.message || 'Đã xảy ra lỗi khi cập nhật trạng thái đơn hàng');
     }
   };

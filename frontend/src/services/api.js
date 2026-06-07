@@ -50,6 +50,10 @@ const apiCall = async (endpoint, options = {}) => {
         details: data.details,
         fullData: data
       });
+      // Token hết hạn hoặc không hợp lệ → xóa user và redirect
+      if (response.status === 401) {
+        localStorage.removeItem('user');
+      }
       throw error;
     }
 
