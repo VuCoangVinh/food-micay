@@ -160,7 +160,9 @@ const OrderManagement = () => {
           norm(order.userPhone).includes(term) ||
           norm(order.tableNumber).includes(term) ||
           norm(order.tableNumber).includes(termForTable) ||
-          norm(order.userName).includes(term)
+          norm(order.userName).includes(term) ||
+          // Tìm theo tổng tiền: chỉ khi là số thuần và >= 4 chữ số (tránh "3" khớp "35.000đ")
+          (/^\d+$/.test(term) && term.length >= 4 && String(order.total).includes(term))
         );
       }
     }

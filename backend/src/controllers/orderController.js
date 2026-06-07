@@ -24,8 +24,15 @@ export const getAllOrders = async (req, res) => {
         params.push(idSearch);
       } else {
         const searchTerm = `%${search}%`;
-        conditions.push('(CAST(id AS TEXT) LIKE ? OR customer_phone LIKE ? OR table_number LIKE ? OR CAST(total_price AS TEXT) LIKE ?)');
-        params.push(searchTerm, searchTerm, searchTerm, searchTerm);
+        // Tìm theo tổng tiền chỉ khi search là số thuần >= 4 chữ số
+        const isLongNumber = /^\d{4,}$/.test(search);
+        if (isLongNumber) {
+          conditions.push('(CAST(id AS TEXT) LIKE ? OR customer_phone LIKE ? OR table_number LIKE ? OR CAST(total_price AS TEXT) LIKE ?)');
+          params.push(searchTerm, searchTerm, searchTerm, searchTerm);
+        } else {
+          conditions.push('(CAST(id AS TEXT) LIKE ? OR customer_phone LIKE ? OR table_number LIKE ?)');
+          params.push(searchTerm, searchTerm, searchTerm);
+        }
       }
     }
 
