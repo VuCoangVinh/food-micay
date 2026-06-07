@@ -18,7 +18,8 @@ const RoleSelection = () => {
   };
 
   const handleCustomerClick = () => {
-    // Chuyển đến trang chủ cho khách hàng
+    // Xóa bàn cũ trong localStorage để tránh tự động chọn bàn từ phiên trước
+    localStorage.removeItem('currentTable');
     navigate('/home');
   };
 
