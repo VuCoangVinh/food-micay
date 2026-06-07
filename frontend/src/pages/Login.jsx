@@ -158,7 +158,7 @@ const Login = () => {
             </button>
           </form>
 
-          <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
+          <div style={{ textAlign: 'center', marginTop: '1rem' }}>
             <p style={{ color: '#718096' }}>
               Chưa có tài khoản?{' '}
               <Link to="/register" style={{ color: '#667eea', fontWeight: '600', textDecoration: 'none' }}>
@@ -167,10 +167,29 @@ const Login = () => {
             </p>
           </div>
 
-          <div style={{ marginTop: '2rem', padding: '1rem', background: '#f7fafc', borderRadius: '8px', fontSize: '0.9rem' }}>
-            <p style={{ fontWeight: '600', marginBottom: '0.5rem' }}>Demo Accounts:</p>
-            <p style={{ marginBottom: '0.25rem' }}>Admin: admin@foodorder.com / admin123</p>
-            <p>User: user@foodorder.com / user123</p>
+          <div style={{ marginTop: '1.5rem', borderTop: '1px solid #e2e8f0', paddingTop: '1.5rem', textAlign: 'center' }}>
+            <p style={{ color: '#a0aec0', fontSize: '0.85rem', marginBottom: '0.75rem' }}>
+              hoặc
+            </p>
+            <button
+              onClick={() => navigate('/home')}
+              style={{
+                width: '100%',
+                padding: '0.75rem',
+                background: 'transparent',
+                border: '2px solid #e2e8f0',
+                borderRadius: '8px',
+                fontSize: '1rem',
+                color: '#718096',
+                cursor: 'pointer',
+                fontWeight: '500',
+                transition: 'all 0.2s'
+              }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = '#667eea'; e.currentTarget.style.color = '#667eea'; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.color = '#718096'; }}
+            >
+              Tiếp tục không cần đăng nhập
+            </button>
           </div>
         </div>
       </div>
