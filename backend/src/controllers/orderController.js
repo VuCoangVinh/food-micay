@@ -29,9 +29,18 @@ export const getAllOrders = async (req, res) => {
         conditions.push('REPLACE(REPLACE(CAST(CAST(total_price AS INTEGER) AS TEXT), ",", ""), ".", "") LIKE ?');
         params.push(priceSearch);
       } else {
-        const searchTerm = `%${search}%`;
-        conditions.push('(CAST(id AS TEXT) LIKE ? OR customer_phone LIKE ? OR table_number LIKE ?)');
-        params.push(searchTerm, searchTerm, searchTerm);
+        // Strip dấu chấm/phẩy ngăn cách nghìn (35.000 → 35000)
+        const cleanSearch = search.replace(/[.,\s]/g, '');
+        const searchTerm = `%${cleanSearch}%`;
+        const isNumeric4Plus = /^\d{4,}$/.test(cleanSearch);
+        if (isNumeric4Plus) {
+          // Số >= 4 chữ số: tìm cả tổng tiền
+          conditions.push('(CAST(id AS TEXT) LIKE ? OR customer_phone LIKE ? OR table_number LIKE ? OR CAST(CAST(total_price AS INTEGER) AS TEXT) LIKE ?)');
+          params.push(searchTerm, searchTerm, searchTerm, searchTerm);
+        } else {
+          conditions.push('(CAST(id AS TEXT) LIKE ? OR customer_phone LIKE ? OR table_number LIKE ?)');
+          params.push(searchTerm, searchTerm, searchTerm);
+        }
       }
     }
 

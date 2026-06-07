@@ -158,14 +158,19 @@ const OrderManagement = () => {
           String(Math.round(order.total)).includes(priceTerm)
         );
       } else {
-        // Tìm theo tất cả trường (trừ giá để tránh nhầm)
         const termForTable = term.startsWith('bàn ') ? term.slice(4) : term;
+        // Strip dấu chấm/phẩy khi tìm theo giá (vd "35.000" → "35000")
+        const priceDigits = term.replace(/[.,\s]/g, '');
+        const isNumeric4Plus = /^\d{4,}$/.test(priceDigits);
+
         filtered = filtered.filter(order =>
           String(order.id).includes(term) ||
           norm(order.userPhone).includes(term) ||
           norm(order.tableNumber).includes(term) ||
           norm(order.tableNumber).includes(termForTable) ||
-          norm(order.userName).includes(term)
+          norm(order.userName).includes(term) ||
+          // Tìm theo giá khi nhập số >= 4 chữ số (50000, 35.000...)
+          (isNumeric4Plus && String(Math.round(order.total)).includes(priceDigits))
         );
       }
     }
