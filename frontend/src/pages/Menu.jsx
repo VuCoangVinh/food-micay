@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { menuAPI } from '../services/api.js';
+import { useAuth } from '../contexts/AuthContext';
 
 const Menu = () => {
+  const { user } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [menuItems, setMenuItems] = useState([]);
   const [message, setMessage] = useState('');
@@ -77,7 +79,6 @@ const Menu = () => {
 
   const addToCart = (item) => {
     try {
-      const user = JSON.parse(localStorage.getItem('user') || 'null');
       const cartKey = (user && !user.isGuest) ? `cart_${user.id}` : 'cart_guest';
       const cart = JSON.parse(localStorage.getItem(cartKey) || '[]');
       const existingItem = cart.find(cartItem => cartItem.id === item.id);
