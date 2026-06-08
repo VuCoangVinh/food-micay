@@ -157,15 +157,13 @@ function App() {
                 </Layout>
               } 
             />
-            <Route 
-              path="/order-history" 
+            <Route
+              path="/order-history"
               element={
                 <Layout>
-                  <ProtectedRoute>
-                    <OrderHistory />
-                  </ProtectedRoute>
+                  <OrderHistory />
                 </Layout>
-              } 
+              }
             />
             <Route 
               path="/orders" 

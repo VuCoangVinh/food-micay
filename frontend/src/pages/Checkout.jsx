@@ -164,6 +164,13 @@ const Checkout = () => {
       // Save order to localStorage for payment page
       localStorage.setItem('lastOrder', JSON.stringify(order));
 
+      // Lưu vào danh sách đơn hàng của khách (không đăng nhập)
+      if (!user) {
+        const guestOrders = JSON.parse(localStorage.getItem('guestOrders') || '[]');
+        guestOrders.unshift(order);
+        localStorage.setItem('guestOrders', JSON.stringify(guestOrders));
+      }
+
       // Cash payment - chỉ cần tạo order, không cần payment
       setLoading(false);
       setMessage('Đơn hàng đã được tạo! Đang chuyển đến trang thanh toán thành công...');

@@ -1,27 +1,67 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { CheckCircle, Clock, Package } from 'lucide-react';
+import { useTable } from '../contexts/TableContext';
+import { CheckCircle, Clock, Package, RefreshCw } from 'lucide-react';
 import { ordersAPI } from '../services/api.js';
 import { formatDateTimeVN } from '../utils/date.js';
 
 const OrderHistory = () => {
   const { user } = useAuth();
+  const { currentTable } = useTable();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     loadOrders();
   }, [user]);
 
-  const loadOrders = async () => {
+  const loadOrders = async (isRefresh = false) => {
+    if (isRefresh) setRefreshing(true);
+    else setLoading(true);
+    setError('');
+
     if (!user) {
+      // Chế độ khách: đọc từ localStorage và fetch live status
+      try {
+        const stored = localStorage.getItem('guestOrders');
+        if (stored) {
+          const guestOrders = JSON.parse(stored);
+          // Fetch live status cho từng đơn hàng
+          const updated = await Promise.all(
+            guestOrders.map(async (order) => {
+              try {
+                const live = await ordersAPI.getById(order.id);
+                let items = [];
+                try {
+                  items = typeof live.items === 'string' ? JSON.parse(live.items) : live.items || [];
+                } catch {}
+                return {
+                  ...order,
+                  status: live.status || order.status,
+                  items: items.length > 0 ? items : order.items,
+                };
+              } catch {
+                return order;
+              }
+            })
+          );
+          setOrders(updated);
+        } else {
+          setOrders([]);
+        }
+      } catch {
+        setError('Không thể tải lịch sử đơn hàng.');
+      }
       setLoading(false);
+      setRefreshing(false);
       return;
     }
+
+    // Người dùng đã đăng nhập: fetch từ API
     try {
-      setLoading(true);
       const data = await ordersAPI.getUserOrders(user.id);
       const transformed = data.map(order => {
         let items = [];
@@ -40,10 +80,11 @@ const OrderHistory = () => {
         };
       });
       setOrders(transformed);
-    } catch (err) {
+    } catch {
       setError('Không thể tải lịch sử đơn hàng.');
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
@@ -68,30 +109,65 @@ const OrderHistory = () => {
     }
   };
 
-  if (!user) {
-    return (
-      <div className="section">
-        <div className="container">
-          <div style={{
-            textAlign: 'center', padding: '4rem 2rem',
-            background: 'rgba(255,255,255,0.95)', borderRadius: '20px',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.1)'
-          }}>
-            <Package size={64} color="#cbd5e0" style={{ marginBottom: '1rem' }} />
-            <p style={{ fontSize: '1.2rem', color: '#718096', marginBottom: '1.5rem' }}>
-              Vui lòng đăng nhập để xem lịch sử đơn hàng
-            </p>
-            <Link to="/login" className="btn">Đăng nhập</Link>
+  // Khách không có bàn và không có đơn hàng lưu → hiển thị yêu cầu đăng nhập
+  if (!user && !currentTable) {
+    const hasGuestOrders = (() => {
+      try {
+        const stored = localStorage.getItem('guestOrders');
+        return stored && JSON.parse(stored).length > 0;
+      } catch {
+        return false;
+      }
+    })();
+
+    if (!hasGuestOrders) {
+      return (
+        <div className="section">
+          <div className="container">
+            <div style={{
+              textAlign: 'center', padding: '4rem 2rem',
+              background: 'rgba(255,255,255,0.95)', borderRadius: '20px',
+              boxShadow: '0 10px 30px rgba(0,0,0,0.1)'
+            }}>
+              <Package size={64} color="#cbd5e0" style={{ marginBottom: '1rem' }} />
+              <p style={{ fontSize: '1.2rem', color: '#718096', marginBottom: '1.5rem' }}>
+                Vui lòng đăng nhập để xem lịch sử đơn hàng
+              </p>
+              <Link to="/login" className="btn">Đăng nhập</Link>
+            </div>
           </div>
         </div>
-      </div>
-    );
+      );
+    }
   }
 
   return (
     <div className="section">
       <div className="container">
-        <h2 style={{ color: '#2d3748', marginBottom: '2rem' }}>Lịch Sử Đơn Hàng</h2>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+          <h2 style={{ color: '#2d3748', margin: 0 }}>Lịch Sử Đơn Hàng</h2>
+          {!loading && orders.length > 0 && (
+            <button
+              onClick={() => loadOrders(true)}
+              disabled={refreshing}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '0.4rem',
+                padding: '0.5rem 1rem',
+                background: 'rgba(102,126,234,0.1)',
+                border: '2px solid #667eea',
+                borderRadius: '20px',
+                color: '#667eea',
+                cursor: refreshing ? 'not-allowed' : 'pointer',
+                fontSize: '0.9rem',
+                fontWeight: '500',
+                opacity: refreshing ? 0.6 : 1
+              }}
+            >
+              <RefreshCw size={15} style={{ animation: refreshing ? 'spin 1s linear infinite' : 'none' }} />
+              Cập nhật
+            </button>
+          )}
+        </div>
 
         {loading ? (
           <div style={{ textAlign: 'center', padding: '3rem', color: '#718096' }}>Đang tải...</div>
@@ -125,13 +201,14 @@ const OrderHistory = () => {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
                   <div>
                     <h3 style={{ color: '#2d3748', marginBottom: '0.5rem' }}>Đơn hàng #{order.id}</h3>
-                    {order.tableNumber && (
+                    {(order.tableNumber || order.table_number) && (
                       <p style={{ color: '#718096', fontSize: '0.9rem' }}>
-                        Bàn: {order.tableNumber} {order.numberOfGuests && `(${order.numberOfGuests} người)`}
+                        Bàn: {order.tableNumber || order.table_number}
+                        {(order.numberOfGuests || order.number_of_guests) && ` (${order.numberOfGuests || order.number_of_guests} người)`}
                       </p>
                     )}
                     <p style={{ color: '#718096', fontSize: '0.9rem' }}>
-                      Ngày đặt: {formatDateTimeVN(order.createdAt)}
+                      Ngày đặt: {formatDateTimeVN(order.createdAt || order.date)}
                     </p>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -142,7 +219,7 @@ const OrderHistory = () => {
 
                 <div style={{ padding: '1rem', background: '#f7fafc', borderRadius: '8px' }}>
                   <h4 style={{ marginBottom: '0.75rem', color: '#2d3748' }}>Chi tiết đơn hàng:</h4>
-                  {order.items.map((item, index) => (
+                  {(order.items || []).map((item, index) => (
                     <div key={index} style={{
                       display: 'flex', justifyContent: 'space-between',
                       marginBottom: '0.5rem', paddingBottom: '0.5rem',
@@ -159,7 +236,7 @@ const OrderHistory = () => {
                     fontWeight: 'bold', fontSize: '1.1rem'
                   }}>
                     <span>Tổng cộng:</span>
-                    <span style={{ color: '#667eea' }}>{formatPrice(order.total)}</span>
+                    <span style={{ color: '#667eea' }}>{formatPrice(order.total || order.total_price)}</span>
                   </div>
                 </div>
               </div>
