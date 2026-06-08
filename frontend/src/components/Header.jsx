@@ -158,7 +158,7 @@ const Header = () => {
                 )}
               </div>
             ) : (
-              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              <div className="auth-buttons" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                 <Link
                   to="/login"
                   style={{
