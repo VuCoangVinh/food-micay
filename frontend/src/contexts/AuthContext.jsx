@@ -15,21 +15,29 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Load user: ưu tiên sessionStorage (guest mode tab này) trước, rồi mới localStorage
+  // Load user theo thứ tự ưu tiên (mỗi loại dùng storage riêng, per-tab):
+  // 1. sessionStorage['guestUser']  — khách từ QR bàn
+  // 2. sessionStorage['user']       — user thường đăng nhập (per-tab, không ảnh hưởng admin)
+  // 3. localStorage['user']         — admin (persistent, dùng chung mọi tab)
   useEffect(() => {
     try {
       const guestUser = sessionStorage.getItem('guestUser');
       if (guestUser) {
-        // Tab này đang ở chế độ khách → dùng guest user (không đụng localStorage)
         setUser(JSON.parse(guestUser));
       } else {
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-          setUser(JSON.parse(storedUser));
+        const sessionUser = sessionStorage.getItem('user');
+        if (sessionUser) {
+          setUser(JSON.parse(sessionUser));
+        } else {
+          const storedUser = localStorage.getItem('user');
+          if (storedUser) {
+            setUser(JSON.parse(storedUser));
+          }
         }
       }
     } catch {
       localStorage.removeItem('user');
+      sessionStorage.removeItem('user');
       sessionStorage.removeItem('guestUser');
     } finally {
       setLoading(false);
@@ -48,10 +56,16 @@ export const AuthProvider = ({ children }) => {
       const result = await authAPI.login(email, password);
       if (result.token && result.user) {
         const userWithToken = { ...result.user, token: result.token };
-        // Đăng nhập thật → xóa guest user
         sessionStorage.removeItem('guestUser');
         setUser(userWithToken);
-        localStorage.setItem('user', JSON.stringify(userWithToken));
+
+        if (userWithToken.role === 'admin') {
+          // Admin → localStorage (persistent, dùng chung)
+          localStorage.setItem('user', JSON.stringify(userWithToken));
+        } else {
+          // User thường → sessionStorage (per-tab, không ghi đè admin)
+          sessionStorage.setItem('user', JSON.stringify(userWithToken));
+        }
         return { success: true, user: userWithToken };
       } else if (result.error) {
         return { success: false, error: result.error };
@@ -72,7 +86,8 @@ export const AuthProvider = ({ children }) => {
         const userWithToken = { ...result.user, token: result.token };
         sessionStorage.removeItem('guestUser');
         setUser(userWithToken);
-        localStorage.setItem('user', JSON.stringify(userWithToken));
+        // User mới đăng ký luôn là user thường → sessionStorage
+        sessionStorage.setItem('user', JSON.stringify(userWithToken));
         return { success: true, user: userWithToken };
       } else if (result.error) {
         return { success: false, error: result.error };
@@ -88,11 +103,13 @@ export const AuthProvider = ({ children }) => {
   // Logout function
   const logout = () => {
     if (user?.isGuest) {
-      // Guest user: chỉ xóa sessionStorage, không đụng localStorage của admin
       sessionStorage.removeItem('guestUser');
-    } else {
+    } else if (user?.role === 'admin') {
       localStorage.removeItem('user');
-      sessionStorage.removeItem('guestUser');
+      sessionStorage.removeItem('user');
+    } else {
+      // User thường: chỉ xóa sessionStorage, không đụng localStorage admin
+      sessionStorage.removeItem('user');
     }
     setUser(null);
   };
