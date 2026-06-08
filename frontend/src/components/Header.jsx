@@ -91,6 +91,7 @@ const Header = () => {
             {user ? (
               <div ref={userMenuRef} style={{ position: 'relative' }}>
                 <button
+                  className="user-btn"
                   onClick={() => setShowUserMenu(!showUserMenu)}
                   style={{
                     display: 'flex',
@@ -107,7 +108,7 @@ const Header = () => {
                   }}
                 >
                   <User size={16} />
-                  <span style={{ maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <span className="user-btn-name" style={{ maxWidth: '100px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {user.name}
                   </span>
                   <ChevronDown size={14} />
