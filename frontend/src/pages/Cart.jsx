@@ -58,10 +58,11 @@ const Cart = () => {
         localStorage.setItem(cartKey, JSON.stringify(items));
       }
       
-      // Debug: log để kiểm tra ảnh
-      console.log('Cart items with images:', items.map(item => ({ name: item.name, image: item.image })));
-      
       setCartItems(items);
+      const count = items.reduce((sum, item) => sum + item.quantity, 0);
+      window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { count } }));
+    } else {
+      window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { count: 0 } }));
     }
   }, [user]);
 
