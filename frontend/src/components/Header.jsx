@@ -54,7 +54,7 @@ const Header = () => {
       window.removeEventListener('cartUpdated', updateCartCount);
       window.removeEventListener('storage', updateCartCount);
     };
-  }, [user]);
+  }, [user, location]);
 
   return (
     <header className="header">
