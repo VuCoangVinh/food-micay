@@ -87,18 +87,6 @@ const Header = () => {
               {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
             </Link>
 
-            {/* Lịch sử đơn hàng cho khách có bàn */}
-            {!user && currentTable && (
-              <Link
-                to="/order-history"
-                className="cart-btn"
-                title="Lịch sử đơn hàng"
-                style={{ position: 'relative' }}
-              >
-                <History size={20} />
-              </Link>
-            )}
-
             {/* User khu vực */}
             {user ? (
               <div ref={userMenuRef} style={{ position: 'relative' }}>
@@ -240,11 +228,6 @@ const Header = () => {
           </>
         ) : (
           <>
-            {currentTable && (
-              <Link to="/order-history" className={isActive('/order-history') ? 'active' : ''} onClick={() => setShowMobileMenu(false)}>
-                Lịch Sử Đơn Hàng
-              </Link>
-            )}
             <Link to="/login" className={isActive('/login') ? 'active' : ''} onClick={() => setShowMobileMenu(false)}>Đăng nhập</Link>
             <Link to="/register" className={isActive('/register') ? 'active' : ''} onClick={() => setShowMobileMenu(false)}>Đăng ký</Link>
           </>
