@@ -41,7 +41,7 @@ const Header = () => {
         setCartCount(event.detail.count);
         return;
       }
-      const cartKey = user ? `cart_${user.id}` : 'cart_guest';
+      const cartKey = (user && !user.isGuest) ? `cart_${user.id}` : 'cart_guest';
       const cart = JSON.parse(localStorage.getItem(cartKey) || '[]');
       const count = cart.reduce((sum, item) => sum + item.quantity, 0);
       setCartCount(count);

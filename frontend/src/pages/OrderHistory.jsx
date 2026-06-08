@@ -23,8 +23,8 @@ const OrderHistory = () => {
     else setLoading(true);
     setError('');
 
-    if (!user) {
-      // Chế độ khách: đọc từ localStorage và fetch live status
+    if (!user || user.isGuest) {
+      // Chế độ khách (guest user hoặc chưa đăng nhập): đọc từ localStorage và fetch live status
       try {
         const stored = localStorage.getItem('guestOrders');
         if (stored) {

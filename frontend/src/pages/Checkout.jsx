@@ -32,7 +32,7 @@ const Checkout = () => {
 
   useEffect(() => {
     // Load cart from localStorage - support both logged in and guest users
-    const cartKey = user ? `cart_${user.id}` : 'cart_guest';
+    const cartKey = (user && !user.isGuest) ? `cart_${user.id}` : 'cart_guest';
     const storedCart = localStorage.getItem(cartKey);
     if (storedCart) {
       const items = JSON.parse(storedCart);
@@ -115,7 +115,7 @@ const Checkout = () => {
     try {
       // Create order via API
       const orderData = {
-        userId: user?.id || null,
+        userId: (user && !user.isGuest) ? user.id : null,
         tableId: currentTable?.id || null,
         customerName: user?.name || 'Khách hàng',
         customerEmail: user?.email || null,
@@ -164,8 +164,8 @@ const Checkout = () => {
       // Save order to localStorage for payment page
       localStorage.setItem('lastOrder', JSON.stringify(order));
 
-      // Lưu vào danh sách đơn hàng của khách (không đăng nhập)
-      if (!user) {
+      // Lưu vào danh sách đơn hàng của khách (không đăng nhập hoặc guest user)
+      if (!user || user.isGuest) {
         const guestOrders = JSON.parse(localStorage.getItem('guestOrders') || '[]');
         guestOrders.unshift(order);
         localStorage.setItem('guestOrders', JSON.stringify(guestOrders));
@@ -176,7 +176,7 @@ const Checkout = () => {
       setMessage('Đơn hàng đã được tạo! Đang chuyển đến trang thanh toán thành công...');
 
       // Clear cart
-      const cartKey = user ? `cart_${user.id}` : 'cart_guest';
+      const cartKey = (user && !user.isGuest) ? `cart_${user.id}` : 'cart_guest';
       localStorage.removeItem(cartKey);
       window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { count: 0 } }));
 

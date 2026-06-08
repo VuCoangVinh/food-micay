@@ -15,31 +15,40 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Load user from localStorage on mount
+  // Load user: real user từ localStorage, guest user từ sessionStorage
   useEffect(() => {
     try {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-        const userData = JSON.parse(storedUser);
-        setUser(userData);
-    }
-    } catch (error) {
-      console.error('Error loading user from localStorage:', error);
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      } else {
+        const guestUser = sessionStorage.getItem('guestUser');
+        if (guestUser) {
+          setUser(JSON.parse(guestUser));
+        }
+      }
+    } catch {
       localStorage.removeItem('user');
+      sessionStorage.removeItem('guestUser');
     } finally {
-    setLoading(false);
+      setLoading(false);
     }
   }, []);
+
+  // Đặt virtual guest user (không cần backend)
+  const setGuestUser = (userData) => {
+    sessionStorage.setItem('guestUser', JSON.stringify(userData));
+    setUser(userData);
+  };
 
   // Login function
   const login = async (email, password) => {
     try {
       const result = await authAPI.login(email, password);
-      // authAPI.login already handles token storage in localStorage
-      // Backend returns { success: true, token, user } or { error: "..." }
       if (result.token && result.user) {
-        // Store user with token
         const userWithToken = { ...result.user, token: result.token };
+        // Đăng nhập thật → xóa guest user
+        sessionStorage.removeItem('guestUser');
         setUser(userWithToken);
         localStorage.setItem('user', JSON.stringify(userWithToken));
         return { success: true, user: userWithToken };
@@ -54,15 +63,13 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Register function - Only for regular users, not admin
+  // Register function
   const register = async (name, email, password) => {
     try {
       const result = await authAPI.register(name, email, password);
-      // authAPI.register already handles token storage in localStorage
-      // Backend returns { success: true, token, user } or { error: "..." }
       if (result.token && result.user) {
-        // Store user with token
         const userWithToken = { ...result.user, token: result.token };
+        sessionStorage.removeItem('guestUser');
         setUser(userWithToken);
         localStorage.setItem('user', JSON.stringify(userWithToken));
         return { success: true, user: userWithToken };
@@ -81,20 +88,15 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
+    sessionStorage.removeItem('guestUser');
   };
 
-  // Check if user is admin
-  const isAdmin = () => {
-    return user?.role === 'admin';
-  };
-
-  // Check if user is authenticated
-  const isAuthenticated = () => {
-    return user !== null;
-  };
+  const isAdmin = () => user?.role === 'admin';
+  const isAuthenticated = () => user !== null;
 
   const value = {
     user,
+    setGuestUser,
     login,
     register,
     logout,

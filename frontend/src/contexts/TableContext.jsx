@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { tablesAPI } from '../services/api.js';
+import { useAuth } from './AuthContext';
 
 const TableContext = createContext();
 
@@ -13,6 +14,27 @@ export const useTable = () => {
 
 export const TableProvider = ({ children }) => {
   const [currentTable, setCurrentTable] = useState(null);
+  const { setGuestUser } = useAuth();
+
+  const createGuestUser = (tableId, tableNumber) => {
+    // Tạo device ID cố định cho thiết bị này
+    let deviceId = localStorage.getItem('guestDeviceId');
+    if (!deviceId) {
+      deviceId = Math.random().toString(36).substr(2, 9);
+      localStorage.setItem('guestDeviceId', deviceId);
+    }
+
+    const guestUserData = {
+      id: `guest_${tableId}_${deviceId}`,
+      name: `Khách ${tableNumber}`,
+      role: 'guest',
+      isGuest: true,
+      tableId: tableId,
+      token: null
+    };
+
+    setGuestUser(guestUserData);
+  };
 
   useEffect(() => {
     const loadTable = async () => {
@@ -30,17 +52,24 @@ export const TableProvider = ({ children }) => {
             status: table.status
           };
           setCurrentTable(tableData);
-          // Dùng sessionStorage: tự xóa khi đóng tab, không rò sang phiên khác
           sessionStorage.setItem('currentTable', JSON.stringify(tableData));
-          // Xóa localStorage cũ nếu có
           localStorage.removeItem('currentTable');
+
+          // Tạo guest user nếu chưa đăng nhập bằng tài khoản thật
+          if (!localStorage.getItem('user')) {
+            createGuestUser(tableId, table.name || `Bàn ${tableId}`);
+          }
           return;
         } catch (error) {
           console.error('Error loading table from API:', error);
-          const table = { id: tableId, number: `Bàn ${tableId}` };
-          setCurrentTable(table);
-          sessionStorage.setItem('currentTable', JSON.stringify(table));
+          const tableFallback = { id: tableId, number: `Bàn ${tableId}` };
+          setCurrentTable(tableFallback);
+          sessionStorage.setItem('currentTable', JSON.stringify(tableFallback));
           localStorage.removeItem('currentTable');
+
+          if (!localStorage.getItem('user')) {
+            createGuestUser(tableId, `Bàn ${tableId}`);
+          }
           return;
         }
       }
