@@ -232,15 +232,7 @@ const AdminLogin = () => {
             </button>
           </form>
 
-          <div style={{ marginTop: '2rem', padding: '1rem', background: '#f7fafc', borderRadius: '8px', fontSize: '0.9rem' }}>
-            <p style={{ fontWeight: '600', marginBottom: '0.5rem', color: '#2d3748' }}>Thông tin đăng nhập:</p>
-            <p style={{ marginBottom: '0.25rem', color: '#4a5568' }}>
-              Email: <strong>admin@foodorder.com</strong>
-            </p>
-            <p style={{ color: '#4a5568' }}>
-              Mật khẩu: <strong>admin123</strong>
-            </p>
-          </div>
+          
         </div>
       </div>
     </div>
