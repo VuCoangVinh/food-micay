@@ -15,16 +15,17 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Load user: real user từ localStorage, guest user từ sessionStorage
+  // Load user: ưu tiên sessionStorage (guest mode tab này) trước, rồi mới localStorage
   useEffect(() => {
     try {
-      const storedUser = localStorage.getItem('user');
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
+      const guestUser = sessionStorage.getItem('guestUser');
+      if (guestUser) {
+        // Tab này đang ở chế độ khách → dùng guest user (không đụng localStorage)
+        setUser(JSON.parse(guestUser));
       } else {
-        const guestUser = sessionStorage.getItem('guestUser');
-        if (guestUser) {
-          setUser(JSON.parse(guestUser));
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
         }
       }
     } catch {

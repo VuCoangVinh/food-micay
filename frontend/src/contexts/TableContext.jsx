@@ -55,13 +55,11 @@ export const TableProvider = ({ children }) => {
           sessionStorage.setItem('currentTable', JSON.stringify(tableData));
           localStorage.removeItem('currentTable');
 
-          // Nếu đang đăng nhập admin → thoát admin, chuyển sang guest mode
-          // Nếu là user thường → giữ nguyên tài khoản
-          // Nếu chưa đăng nhập → tạo guest user
+          // Luôn tạo guest user khi vào link bàn (không xóa localStorage admin)
+          // sessionStorage là per-tab → tab admin vẫn dùng localStorage bình thường
           const storedUser = localStorage.getItem('user');
           const currentUser = storedUser ? JSON.parse(storedUser) : null;
-          if (!currentUser || currentUser.role === 'admin') {
-            if (currentUser?.role === 'admin') localStorage.removeItem('user');
+          if (!currentUser || currentUser.role === 'admin' || currentUser.isGuest) {
             createGuestUser(tableId, table.name || `Bàn ${tableId}`);
           }
           return;
@@ -74,8 +72,7 @@ export const TableProvider = ({ children }) => {
 
           const storedUser = localStorage.getItem('user');
           const currentUser = storedUser ? JSON.parse(storedUser) : null;
-          if (!currentUser || currentUser.role === 'admin') {
-            if (currentUser?.role === 'admin') localStorage.removeItem('user');
+          if (!currentUser || currentUser.role === 'admin' || currentUser.isGuest) {
             createGuestUser(tableId, `Bàn ${tableId}`);
           }
           return;
