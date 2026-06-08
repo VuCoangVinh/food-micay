@@ -79,7 +79,7 @@ const Menu = () => {
 
   const addToCart = (item) => {
     try {
-      const cartKey = (user && !user.isGuest) ? `cart_${user.id}` : 'cart_guest';
+      const cartKey = user ? `cart_${user.id}` : 'cart_guest';
       const cart = JSON.parse(localStorage.getItem(cartKey) || '[]');
       const existingItem = cart.find(cartItem => cartItem.id === item.id);
 

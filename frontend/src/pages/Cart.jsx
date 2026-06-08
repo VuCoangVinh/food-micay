@@ -36,7 +36,7 @@ const Cart = () => {
 
   useEffect(() => {
     // Load cart from localStorage - support both logged in and guest users
-    const cartKey = (user && !user.isGuest) ? `cart_${user.id}` : 'cart_guest';
+    const cartKey = user ? `cart_${user.id}` : 'cart_guest';
     const storedCart = localStorage.getItem(cartKey);
     if (storedCart) {
       let items = JSON.parse(storedCart);
@@ -68,7 +68,7 @@ const Cart = () => {
 
   const saveCart = (items) => {
     setCartItems(items);
-    const cartKey = (user && !user.isGuest) ? `cart_${user.id}` : 'cart_guest';
+    const cartKey = user ? `cart_${user.id}` : 'cart_guest';
     localStorage.setItem(cartKey, JSON.stringify(items));
     const count = items.reduce((sum, item) => sum + item.quantity, 0);
     window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { count } }));

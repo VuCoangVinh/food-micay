@@ -32,7 +32,7 @@ const Checkout = () => {
 
   useEffect(() => {
     // Load cart from localStorage - support both logged in and guest users
-    const cartKey = (user && !user.isGuest) ? `cart_${user.id}` : 'cart_guest';
+    const cartKey = user ? `cart_${user.id}` : 'cart_guest';
     const storedCart = localStorage.getItem(cartKey);
     if (storedCart) {
       const items = JSON.parse(storedCart);
@@ -176,7 +176,7 @@ const Checkout = () => {
       setMessage('Đơn hàng đã được tạo! Đang chuyển đến trang thanh toán thành công...');
 
       // Clear cart
-      const cartKey = (user && !user.isGuest) ? `cart_${user.id}` : 'cart_guest';
+      const cartKey = user ? `cart_${user.id}` : 'cart_guest';
       localStorage.removeItem(cartKey);
       window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { count: 0 } }));
 
