@@ -139,20 +139,6 @@ const Header = () => {
                     >
                       <History size={16} color="#667eea" /> Lịch sử đơn hàng
                     </Link>
-                    <Link
-                      to="/profile"
-                      onClick={() => setShowUserMenu(false)}
-                      style={{
-                        display: 'flex', alignItems: 'center', gap: '0.6rem',
-                        padding: '0.75rem 1rem', color: '#2d3748',
-                        textDecoration: 'none', fontSize: '0.9rem',
-                        borderBottom: '1px solid #f0f0f0'
-                      }}
-                      onMouseEnter={e => e.currentTarget.style.background = '#f7fafc'}
-                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                    >
-                      <User size={16} color="#667eea" /> Hồ sơ cá nhân
-                    </Link>
                     <button
                       onClick={handleLogout}
                       style={{
