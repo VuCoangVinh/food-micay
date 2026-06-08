@@ -227,6 +227,7 @@
   transition: all 0.3s ease;
   font-weight: 600;
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  position: relative;
 }
 
 .cart-btn:hover {
@@ -626,12 +627,16 @@
     padding: 0.4rem 0.75rem;
   }
 
+  .header-right {
+    gap: 0.5rem;
+  }
+
   .user-btn-name {
     display: none;
   }
 
   .user-btn {
-    padding: 0.4rem 0.6rem !important;
+    padding: 0.4rem 0.5rem !important;
     gap: 0.2rem !important;
   }
 
@@ -640,8 +645,18 @@
   }
 
   .cart-btn {
-    padding: 0.6rem 0.8rem;
+    padding: 0.5rem;
     font-size: 0.9rem;
+  }
+
+  .cart-count {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 18px;
+    height: 18px;
+    font-size: 0.65rem;
+    margin-left: 0;
   }
 
   /* Keep the cart badge visible on mobile, but hide other spans inside .cart-btn */
