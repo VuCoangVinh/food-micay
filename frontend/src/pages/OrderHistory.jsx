@@ -28,7 +28,11 @@ const OrderHistory = () => {
       try {
         const stored = localStorage.getItem('guestOrders');
         if (stored) {
-          const guestOrders = JSON.parse(stored);
+          let guestOrders = JSON.parse(stored);
+          // Lọc theo bàn hiện tại để tránh lẫn đơn hàng giữa các bàn
+          if (currentTable?.number) {
+            guestOrders = guestOrders.filter(order => order.tableNumber === currentTable.number);
+          }
           // Fetch live status cho từng đơn hàng
           const updated = await Promise.all(
             guestOrders.map(async (order) => {
