@@ -19,7 +19,7 @@ const ProtectedRoute = ({ children, requireAdmin = false }) => {
   }
 
   if (!isAuthenticated()) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to={requireAdmin ? '/' : '/login'} replace />;
   }
 
   if (requireAdmin && !isAdmin()) {
