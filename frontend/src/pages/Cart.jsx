@@ -69,6 +69,8 @@ const Cart = () => {
     setCartItems(items);
     const cartKey = user ? `cart_${user.id}` : 'cart_guest';
     localStorage.setItem(cartKey, JSON.stringify(items));
+    const count = items.reduce((sum, item) => sum + item.quantity, 0);
+    window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { count } }));
   };
 
   const updateQuantity = (id, newQuantity) => {
