@@ -31,6 +31,15 @@ const OrderHistory = () => {
     if (!user || user.isGuest) {
       // Chế độ khách (guest user hoặc chưa đăng nhập): đọc từ localStorage và fetch live status
       try {
+        // Xóa guestOrders nếu quá 2 giờ không truy cập
+        const lastAccess = localStorage.getItem('guestOrdersLastAccess');
+        if (lastAccess && Date.now() - parseInt(lastAccess) > 2 * 60 * 60 * 1000) {
+          localStorage.removeItem('guestOrders');
+          localStorage.removeItem('guestOrdersLastAccess');
+        } else {
+          localStorage.setItem('guestOrdersLastAccess', Date.now().toString());
+        }
+
         const stored = localStorage.getItem('guestOrders');
         if (stored) {
           let guestOrders = JSON.parse(stored);

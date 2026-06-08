@@ -169,6 +169,7 @@ const Checkout = () => {
         const guestOrders = JSON.parse(localStorage.getItem('guestOrders') || '[]');
         guestOrders.unshift(order);
         localStorage.setItem('guestOrders', JSON.stringify(guestOrders));
+        localStorage.setItem('guestOrdersLastAccess', Date.now().toString());
       }
 
       // Cash payment - chỉ cần tạo order, không cần payment
