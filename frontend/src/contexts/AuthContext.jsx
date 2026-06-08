@@ -31,7 +31,11 @@ export const AuthProvider = ({ children }) => {
         } else {
           const storedUser = localStorage.getItem('user');
           if (storedUser) {
-            setUser(JSON.parse(storedUser));
+            const parsed = JSON.parse(storedUser);
+            // Chỉ load admin từ localStorage khi đang ở trang admin
+            if (parsed.role !== 'admin' || window.location.pathname.startsWith('/admin')) {
+              setUser(parsed);
+            }
           }
         }
       }
