@@ -623,11 +623,7 @@
 
   .table-badge {
     font-size: 0.85rem;
-    padding: 0.5rem 1rem;
-  }
-
-  .table-badge span {
-    display: none;
+    padding: 0.4rem 0.75rem;
   }
 
   .user-btn-name {
