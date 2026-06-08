@@ -87,9 +87,14 @@ export const AuthProvider = ({ children }) => {
 
   // Logout function
   const logout = () => {
+    if (user?.isGuest) {
+      // Guest user: chỉ xóa sessionStorage, không đụng localStorage của admin
+      sessionStorage.removeItem('guestUser');
+    } else {
+      localStorage.removeItem('user');
+      sessionStorage.removeItem('guestUser');
+    }
     setUser(null);
-    localStorage.removeItem('user');
-    sessionStorage.removeItem('guestUser');
   };
 
   const isAdmin = () => user?.role === 'admin';
