@@ -1,10 +1,17 @@
 // API Service for FoodOrder Backend
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
-// Helper function to get auth token
+// Helper function to get auth token — ưu tiên sessionStorage (per-tab) trước localStorage (admin)
 const getToken = () => {
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
-  return user.token || null;
+  try {
+    const guestUser = sessionStorage.getItem('guestUser');
+    if (guestUser) return JSON.parse(guestUser).token || null;
+    const sessionUser = sessionStorage.getItem('user');
+    if (sessionUser) return JSON.parse(sessionUser).token || null;
+    const localUser = localStorage.getItem('user');
+    if (localUser) return JSON.parse(localUser).token || null;
+  } catch {}
+  return null;
 };
 
 // Helper function for API calls
@@ -50,9 +57,14 @@ const apiCall = async (endpoint, options = {}) => {
         details: data.details,
         fullData: data
       });
-      // Token hết hạn hoặc không hợp lệ → xóa user và redirect
+      // Token hết hạn → xóa đúng storage, không đụng localStorage admin
       if (response.status === 401) {
-        localStorage.removeItem('user');
+        if (sessionStorage.getItem('user') || sessionStorage.getItem('guestUser')) {
+          sessionStorage.removeItem('user');
+          sessionStorage.removeItem('guestUser');
+        } else {
+          localStorage.removeItem('user');
+        }
       }
       throw error;
     }
@@ -72,33 +84,17 @@ const apiCall = async (endpoint, options = {}) => {
 // Auth API
 export const authAPI = {
   login: async (email, password) => {
-    const data = await apiCall('/auth/login', {
+    return apiCall('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password })
     });
-    
-    // Store token in user object
-    if (data.token && data.user) {
-      const userWithToken = { ...data.user, token: data.token };
-      localStorage.setItem('user', JSON.stringify(userWithToken));
-    }
-    
-    return data;
   },
 
   register: async (name, email, password) => {
-    const data = await apiCall('/auth/register', {
+    return apiCall('/auth/register', {
       method: 'POST',
       body: JSON.stringify({ name, email, password })
     });
-    
-    // Store token in user object
-    if (data.token && data.user) {
-      const userWithToken = { ...data.user, token: data.token };
-      localStorage.setItem('user', JSON.stringify(userWithToken));
-    }
-    
-    return data;
   }
 };
 
