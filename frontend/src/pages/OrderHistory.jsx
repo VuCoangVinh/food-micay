@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTable } from '../contexts/TableContext';
@@ -13,9 +13,14 @@ const OrderHistory = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [refreshing, setRefreshing] = useState(false);
+  const intervalRef = useRef(null);
 
   useEffect(() => {
     loadOrders();
+    intervalRef.current = setInterval(() => {
+      loadOrders(true);
+    }, 10000);
+    return () => clearInterval(intervalRef.current);
   }, [user]);
 
   const loadOrders = async (isRefresh = false) => {
