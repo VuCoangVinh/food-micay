@@ -171,6 +171,7 @@ const Checkout = () => {
       // Clear cart
       const cartKey = user ? `cart_${user.id}` : 'cart_guest';
       localStorage.removeItem(cartKey);
+      window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { count: 0 } }));
 
       setTimeout(() => {
         navigate(`/payment/success?orderId=${order.id}`);
