@@ -383,10 +383,6 @@ const OrderManagement = () => {
                 onChange={(e) => setSelectedDate(e.target.value)}
                 style={{ padding: '0.5rem', border: '1px solid #e2e8f0', borderRadius: '8px' }}
               />
-              <button
-                onClick={() => setSelectedDate(new Date().toISOString().split('T')[0])}
-                style={{ padding: '0.5rem 0.75rem', borderRadius: '8px', border: 'none', background: '#667eea', color: 'white', cursor: 'pointer' }}
-              >Hôm nay</button>
             </div>
             <p style={{ fontSize: '1.2rem', fontWeight: '800', color: '#f59e0b', marginTop: '0.75rem' }}>
               {formatPrice(getDailyRevenue(selectedDate))}
