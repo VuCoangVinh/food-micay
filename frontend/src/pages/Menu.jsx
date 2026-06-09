@@ -77,7 +77,10 @@ const Menu = () => {
     }
   };
 
+  const isOutOfStock = (item) => item.quantity !== null && item.quantity !== undefined && item.quantity === 0;
+
   const addToCart = (item) => {
+    if (isOutOfStock(item)) return;
     try {
       const cartKey = user ? `cart_${user.id}` : 'cart_guest';
       const cart = JSON.parse(localStorage.getItem(cartKey) || '[]');
@@ -208,30 +211,57 @@ const Menu = () => {
 
         {/* Menu Items */}
         <div className="grid">
-          {paginatedItems.map((item) => (
-            <div key={item.id} className="food-card">
-              <img 
-                src={getImageUrl(item.image)} 
+          {paginatedItems.map((item) => {
+            const outOfStock = isOutOfStock(item);
+            return (
+            <div key={item.id} className="food-card" style={{ position: 'relative', opacity: outOfStock ? 0.75 : 1 }}>
+              {outOfStock && (
+                <div style={{
+                  position: 'absolute',
+                  top: '12px',
+                  right: '12px',
+                  background: '#c53030',
+                  color: 'white',
+                  padding: '0.3rem 0.8rem',
+                  borderRadius: '20px',
+                  fontSize: '0.8rem',
+                  fontWeight: '700',
+                  zIndex: 1,
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
+                }}>
+                  Hết hàng
+                </div>
+              )}
+              <img
+                src={getImageUrl(item.image)}
                 alt={item.name}
                 onError={(e) => {
                   e.target.src = 'https://via.placeholder.com/300x200?text=No+Image';
                 }}
+                style={{ filter: outOfStock ? 'grayscale(50%)' : 'none' }}
               />
               <div className="food-card-content">
                 <h3>{item.name}</h3>
                 <p>{item.description}</p>
                 <div className="food-card-footer">
                   <span className="price">{formatPrice(item.price)}</span>
-                  <button 
+                  <button
                     className="add-btn"
                     onClick={() => addToCart(item)}
+                    disabled={outOfStock}
+                    style={outOfStock ? {
+                      background: '#a0aec0',
+                      cursor: 'not-allowed',
+                      opacity: 0.7
+                    } : {}}
                   >
-                    Thêm vào giỏ
+                    {outOfStock ? 'Hết hàng' : 'Thêm vào giỏ'}
                   </button>
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
 
         {filteredItems.length === 0 && (
