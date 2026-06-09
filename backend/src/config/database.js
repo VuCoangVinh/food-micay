@@ -59,10 +59,18 @@ export const initDatabase = async () => {
         price REAL NOT NULL,
         category TEXT NOT NULL,
         image TEXT,
+        quantity INTEGER DEFAULT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `);
+
+    // Migration: add quantity column for existing databases
+    try {
+      await db.run('ALTER TABLE menu_items ADD COLUMN quantity INTEGER DEFAULT NULL');
+    } catch (e) {
+      // Column already exists, ignore
+    }
 
     // Tables table
     await db.run(`

@@ -39,7 +39,7 @@ export const getMenuItemById = async (req, res) => {
 
 export const createMenuItem = async (req, res) => {
   try {
-    const { name, description, price, category, image } = req.body;
+    const { name, description, price, category, image, quantity } = req.body;
 
     // Validation
     if (!name || !description || !price || !category) {
@@ -59,9 +59,17 @@ export const createMenuItem = async (req, res) => {
       return res.status(400).json({ error: 'Giá không hợp lệ (1,000 - 10,000,000 VND)' });
     }
 
+    let quantityValue = null;
+    if (quantity !== undefined && quantity !== null && quantity !== '') {
+      quantityValue = parseInt(quantity);
+      if (isNaN(quantityValue) || quantityValue < 0) {
+        return res.status(400).json({ error: 'Số lượng không hợp lệ (phải >= 0)' });
+      }
+    }
+
     const result = await db.run(
-      'INSERT INTO menu_items (name, description, price, category, image) VALUES (?, ?, ?, ?, ?)',
-      [name.trim(), description.trim(), priceValue, category, image || null]
+      'INSERT INTO menu_items (name, description, price, category, image, quantity) VALUES (?, ?, ?, ?, ?, ?)',
+      [name.trim(), description.trim(), priceValue, category, image || null, quantityValue]
     );
 
     const newItem = await db.get('SELECT * FROM menu_items WHERE id = ?', [result.lastID]);
@@ -76,7 +84,7 @@ export const createMenuItem = async (req, res) => {
 export const updateMenuItem = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, description, price, category, image } = req.body;
+    const { name, description, price, category, image, quantity } = req.body;
 
     // Check if item exists
     const existingItem = await db.get('SELECT * FROM menu_items WHERE id = ?', [id]);
@@ -100,14 +108,27 @@ export const updateMenuItem = async (req, res) => {
       }
     }
 
+    let quantityValue = existingItem.quantity;
+    if (quantity !== undefined) {
+      if (quantity === null || quantity === '') {
+        quantityValue = null;
+      } else {
+        quantityValue = parseInt(quantity);
+        if (isNaN(quantityValue) || quantityValue < 0) {
+          return res.status(400).json({ error: 'Số lượng không hợp lệ (phải >= 0)' });
+        }
+      }
+    }
+
     await db.run(
-      'UPDATE menu_items SET name = ?, description = ?, price = ?, category = ?, image = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+      'UPDATE menu_items SET name = ?, description = ?, price = ?, category = ?, image = ?, quantity = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
       [
         name?.trim() || existingItem.name,
         description?.trim() || existingItem.description,
         price ? parseFloat(price) : existingItem.price,
         category || existingItem.category,
         image !== undefined ? image : existingItem.image,
+        quantityValue,
         id
       ]
     );

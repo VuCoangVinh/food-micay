@@ -41,12 +41,14 @@ const MenuManagement = () => {
     // Fallback
     return 'https://via.placeholder.com/300x200?text=No+Image';
   };
+  const [stockFilter, setStockFilter] = useState('all'); // all, in_stock, out_of_stock
   const [formData, setFormData] = useState({
     name: '',
     description: '',
     price: '',
     category: 'main',
-    image: ''
+    image: '',
+    quantity: ''
   });
   const [imagePreview, setImagePreview] = useState(null);
 
@@ -64,7 +66,7 @@ const MenuManagement = () => {
   useEffect(() => {
     filterAndSortItems();
     setCurrentPage(1); // Reset về trang 1 khi filter/sort thay đổi
-  }, [menuItems, searchTerm, selectedCategory, sortBy, sortOrder]);
+  }, [menuItems, searchTerm, selectedCategory, sortBy, sortOrder, stockFilter]);
 
   const filterAndSortItems = () => {
     let filtered = [...menuItems];
@@ -80,6 +82,13 @@ const MenuManagement = () => {
     // Filter by category
     if (selectedCategory !== 'all') {
       filtered = filtered.filter(item => item.category === selectedCategory);
+    }
+
+    // Filter by stock status
+    if (stockFilter === 'in_stock') {
+      filtered = filtered.filter(item => item.quantity === null || item.quantity === undefined || item.quantity > 0);
+    } else if (stockFilter === 'out_of_stock') {
+      filtered = filtered.filter(item => item.quantity !== null && item.quantity !== undefined && item.quantity === 0);
     }
 
     // Sort
@@ -247,7 +256,8 @@ const MenuManagement = () => {
           description: formData.description.trim(),
           price: Number(formData.price),
           category: formData.category,
-          image: imageUrl || null
+          image: imageUrl || null,
+          quantity: formData.quantity !== '' ? Number(formData.quantity) : null
         };
 
         if (editingItem) {
@@ -279,7 +289,8 @@ const MenuManagement = () => {
       description: item.description,
       price: item.price.toString(),
       category: item.category,
-      image: item.image
+      image: item.image,
+      quantity: item.quantity !== null && item.quantity !== undefined ? item.quantity.toString() : ''
     });
     // Set preview if image is base64
     if (item.image && item.image.startsWith('data:image/')) {
@@ -313,7 +324,8 @@ const MenuManagement = () => {
       description: '',
       price: '',
       category: 'main',
-      image: ''
+      image: '',
+      quantity: ''
     });
     setImagePreview(null);
     setEditingItem(null);
@@ -419,6 +431,26 @@ const MenuManagement = () => {
             </select>
           </div>
 
+          {/* Stock Filter */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <select
+              value={stockFilter}
+              onChange={(e) => setStockFilter(e.target.value)}
+              style={{
+                padding: '0.75rem 1rem',
+                border: '2px solid #e2e8f0',
+                borderRadius: '12px',
+                fontSize: '1rem',
+                background: 'white',
+                cursor: 'pointer'
+              }}
+            >
+              <option value="all">Tất cả tồn kho</option>
+              <option value="in_stock">Còn hàng</option>
+              <option value="out_of_stock">Hết hàng</option>
+            </select>
+          </div>
+
           {/* Sort */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <ArrowUpDown size={20} color="#718096" />
@@ -482,7 +514,7 @@ const MenuManagement = () => {
             )}
             
             <form onSubmit={handleSubmit}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
                 <div>
                   <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600' }}>Tên món</label>
                   <input
@@ -515,6 +547,22 @@ const MenuManagement = () => {
                       <option key={cat.id} value={cat.id}>{cat.name}</option>
                     ))}
                   </select>
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600' }}>
+                    Số lượng còn lại
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.quantity}
+                    onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
+                    min="0"
+                    placeholder="Để trống = không giới hạn"
+                    style={{ width: '100%', padding: '0.75rem', border: '2px solid #e2e8f0', borderRadius: '8px' }}
+                  />
+                  <p style={{ fontSize: '0.8rem', color: '#718096', marginTop: '0.4rem' }}>
+                    0 = hết hàng · để trống = không giới hạn
+                  </p>
                 </div>
               </div>
               <div style={{ marginBottom: '1rem' }}>
@@ -691,6 +739,36 @@ const MenuManagement = () => {
               />
               <div className="food-card-content">
                 <h3>{item.name}</h3>
+                {/* Stock badge */}
+                {item.quantity !== null && item.quantity !== undefined ? (
+                  <span style={{
+                    display: 'inline-block',
+                    padding: '0.2rem 0.65rem',
+                    borderRadius: '20px',
+                    fontSize: '0.78rem',
+                    fontWeight: '700',
+                    marginBottom: '0.4rem',
+                    background: item.quantity === 0 ? '#fed7d7' : '#c6f6d5',
+                    color: item.quantity === 0 ? '#c53030' : '#276749',
+                    border: `1px solid ${item.quantity === 0 ? '#fc8181' : '#68d391'}`
+                  }}>
+                    {item.quantity === 0 ? '✗ Hết hàng' : `✓ Còn ${item.quantity} suất`}
+                  </span>
+                ) : (
+                  <span style={{
+                    display: 'inline-block',
+                    padding: '0.2rem 0.65rem',
+                    borderRadius: '20px',
+                    fontSize: '0.78rem',
+                    fontWeight: '600',
+                    marginBottom: '0.4rem',
+                    background: '#ebf8ff',
+                    color: '#2b6cb0',
+                    border: '1px solid #90cdf4'
+                  }}>
+                    ∞ Không giới hạn
+                  </span>
+                )}
                 <p>{item.description}</p>
                 <div className="food-card-footer">
                   <span className="price">{formatPrice(item.price)}</span>
